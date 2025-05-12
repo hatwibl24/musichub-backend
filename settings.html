@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>                                                                                                                                                                                                                                                                                                                      
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MusicHub - Settings</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/mobile.css">
+    <style>
+        :root {
+            --bg-primary: #121212;
+            --bg-secondary: #181818;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B3B3B3;
+            --accent-blue: #0066ff;
+            --accent-blue-hover: #0052cc;
+            --neon-glow: 0 0 10px rgba(0, 102, 255, 0.5);
+            --sidebar-width: 250px;
+        }
+
+        :root[data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --text-primary: #000000;
+            --text-secondary: #666666;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            max-width: 1200px;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        .settings-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--text-secondary);
+        }
+
+        .settings-header h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .settings-nav {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .settings-nav-item {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            background: transparent;
+            border: none;
+        }
+
+        .settings-nav-item.active {
+            background: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        .settings-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .settings-section.active {
+            display: block;
+        }
+
+        .settings-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .settings-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .settings-card h2 i {
+            color: var(--accent-blue);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            padding: 0.75rem;
+            border-radius: 8px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            background: var(--bg-secondary);
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+            box-shadow: var(--neon-glow);
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--text-secondary);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 26px;
+            height: 26px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--accent-blue);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(30px);
+        }
+
+        .profile-photo-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin-bottom: 1rem;
+            padding: 11px;
+            background: var(--bg-secondary);
+            border-radius: 50%;
+        }
+
+        .profile-photo {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .photo-upload-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--accent-blue);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .photo-upload-btn:hover {
+            transform: scale(1.1);
+            background: var(--accent-blue-hover);
+        }
+
+        .social-links {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        }
+
+        .social-input {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .social-input input {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            width: 100%;
+        }
+
+        .social-input input:focus {
+            outline: none;
+        }
+
+        .social-input input::placeholder {
+            color: var(--text-secondary);
+            opacity: 1;
+        }
+
+        .social-input i {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        .btn {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: var(--accent-blue-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--neon-glow);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .btn-outline:hover {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #bb2d3b;
+            box-shadow: 0 0 10px rgba(220, 53, 69, 0.5);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .success-message {
+            display: none;
+            background: rgba(40, 167, 69, 0.2);
+            border: 1px solid #28a745;
+            color: #28a745;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .error-message {
+            display: none;
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid #dc3545;
+            color: #dc3545;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Update placeholder color */
+        ::placeholder {
+            color: var(--text-secondary) !important;
+            opacity: 1;
+        }
+
+        :-ms-input-placeholder {
+            color: var(--text-secondary) !important;
+        }
+
+        ::-ms-input-placeholder {
+            color: var(--text-secondary) !important;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            height: 100vh;
+            position: fixed;
+            width: var(--sidebar-width);
+            overflow-y: auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .nav-item i {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        .modal .form-control {
+            background: var(--bg-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .modal .form-control:focus {
+            background: var(--bg-primary);
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+            box-shadow: var(--neon-glow);
+        }
+
+        .password-input-group {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--text-primary);
+        }
+
+        .password-toggle:focus {
+            outline: none;
+        }
+
+        .password-input-group .form-control {
+            padding-right: 40px;
+        }
+
+        /* Mobile Header Bar */
+        .mobile-header {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .mobile-header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .mobile-header-icons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .header-icon {
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+            transition: color 0.2s ease;
+        }
+        
+        .header-icon:hover, .header-icon.active {
+            color: var(--accent-blue);
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-header {
+                display: flex;
+            }
+            
+            .settings-header h1 {
+                display: none;
+            }
+
+            .sidebar {
+                display: none;
+            }
+            
+            .main-content {
+                width: 100%;
+                margin-left: 0;
+                margin-bottom: 60px; /* Make room for bottom nav */
+                padding-bottom: 80px; /* Extra padding to prevent content from being hidden by bottom nav */
+            }
+            
+            .bottom-nav {
+                display: flex;
+            }
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            padding: 0.75rem 1rem;
+            justify-content: space-between;
+        }
+        
+        .bottom-nav .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            padding: 0.5rem;
+            margin: 0;
+            border-radius: 0;
+            background: transparent;
+        }
+        
+        .bottom-nav .nav-item i {
+            font-size: 1.2rem;
+            margin: 0 0 0.25rem 0;
+        }
+        
+        .bottom-nav .nav-item.active {
+            color: var(--accent-blue);
+        }
+        
+        .bottom-nav .nav-text {
+            font-size: 0.75rem;
+        }
+        
+        /* User type specific styling */
+        body[data-user-type="artist"] .artist-only {
+            display: flex !important;
+        }
+        
+        .artist-only {
+            display: none !important;
+        }
+
+        /* Logout button styles */
+        .logout-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--accent-blue);
+            color: var(--text-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .logout-btn:hover {
+            background: var(--accent-blue);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="logo">
+            <i class="bi bi-music-note-beamed"></i>
+            <span>MusicHub</span>
+        </div>
+        <a href="feed.html" class="nav-item">
+            <i class="bi bi-house"></i>
+            <span class="nav-text">Home</span>
+        </a>
+        <a href="explore.html" class="nav-item">
+            <i class="bi bi-compass"></i>
+            <span class="nav-text">Explore</span>
+        </a>
+        <a href="album.html" class="nav-item">
+            <i class="bi bi-collection"></i>
+            <span class="nav-text">Albums</span>
+        </a>
+        <a href="playlist.html" class="nav-item">
+            <i class="bi bi-music-note-list"></i>
+            <span class="nav-text">Playlists</span>
+        </a>
+        <a href="upload.html" class="nav-item artist-only">
+            <i class="bi bi-cloud-upload"></i>
+            <span class="nav-text">Upload</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <i class="bi bi-person"></i>
+            <span class="nav-text">Profile</span>
+        </a>
+        <a href="settings.html" class="nav-item active">
+            <i class="bi bi-gear"></i>
+            <span class="nav-text">Settings</span>
+        </a>
+        <a href="help.html" class="nav-item">
+            <i class="bi bi-question-circle"></i>
+            <span class="nav-text">Help</span>
+        </a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Mobile Header Bar -->
+        <div class="mobile-header">
+            <h1>Settings</h1>
+            <div class="mobile-header-icons">
+                <a href="profile.html" class="header-icon">
+                    <i class="bi bi-person"></i>
+                </a>
+                <a href="settings.html" class="header-icon active">
+                    <i class="bi bi-gear"></i>
+                </a>
+                <a href="help.html" class="header-icon">
+                    <i class="bi bi-question-circle"></i>
+                </a>
+            </div>
+        </div>
+        
+        <div class="settings-header">
+            <div class="settings-nav">
+                <button class="settings-nav-item active" data-section="profile">Profile Settings</button>
+                <button class="settings-nav-item" data-section="account">Account Settings</button>
+            </div>
+        </div>
+
+        <!-- Profile Settings Section -->
+        <section id="profileSettings" class="settings-section active">
+            <div class="settings-card">
+                <h2><i class="bi bi-person-circle"></i> Profile Information</h2>
+                <div class="profile-photo-container">
+                    <img src="assets/default-avatar.jpg" alt="Profile Photo" class="profile-photo" id="profilePhoto">
+                    <button class="photo-upload-btn" onclick="document.getElementById('photoInput').click()">
+                        <i class="bi bi-camera text-white"></i>
+                    </button>
+                    <input type="file" id="photoInput" hidden accept="image/*" onchange="handlePhotoUpload(event)">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Bio</label>
+                    <textarea class="form-control" id="bio" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Social Media Links</label>
+                    <div class="social-links">
+                        <div class="social-input">
+                            <i class="bi bi-instagram"></i>
+                            <input type="text" placeholder="Instagram username" id="instagram">
+                        </div>
+                        <div class="social-input">
+                            <i class="bi bi-twitter"></i>
+                            <input type="text" placeholder="Twitter username" id="twitter">
+                        </div>
+                        <div class="social-input">
+                            <i class="bi bi-facebook"></i>
+                            <input type="text" placeholder="Facebook profile" id="facebook">
+                        </div>
+                        <div class="social-input">
+                            <i class="bi bi-youtube"></i>
+                            <input type="text" placeholder="YouTube channel" id="youtube">
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="saveProfileSettings()">Save Changes</button>
+            </div>
+        </section>
+
+        <!-- Account Settings Section -->
+        <section id="accountSettings" class="settings-section">
+            <div class="settings-card">
+                <h2><i class="bi bi-shield-lock"></i> Account Security</h2>
+                <div class="form-group">
+                    <label class="form-label">Account Type</label>
+                    <div class="d-flex align-items-center gap-3">
+                        <select class="form-control" id="accountType" onchange="changeAccountType(this.value)">
+                            <option value="listener">Listener</option>
+                            <option value="artist">Artist</option>
+                        </select>
+                        <small class="text-secondary">Changing account type will affect your ability to upload content</small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-control" id="email" readonly>
+                    <button class="btn btn-outline-primary mt-2" onclick="changeEmail()">Change Email</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Change Password</label>
+                    <div class="password-input-group">
+                        <input type="password" class="form-control mb-2" id="currentPassword" placeholder="Current password">
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('currentPassword')">
+                            <i class="bi bi-eye-slash"></i>
+                        </button>
+                    </div>
+                    <div class="password-input-group">
+                        <input type="password" class="form-control mb-2" id="newPassword" placeholder="New password">
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('newPassword')">
+                            <i class="bi bi-eye-slash"></i>
+                        </button>
+                    </div>
+                    <div class="password-input-group">
+                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm new password">
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('confirmPassword')">
+                            <i class="bi bi-eye-slash"></i>
+                        </button>
+                    </div>
+                    <button class="btn btn-primary mt-3" onclick="changePassword()">Update Password</button>
+                    <button class="logout-btn mt-3" onclick="logout()">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Log Out
+                    </button>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <h2><i class="bi bi-exclamation-triangle"></i> Danger Zone</h2>
+                <p class="text-secondary mb-4">Once you delete your account, there is no going back. Please be certain.</p>
+                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">Delete Account</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Delete Account Modal -->
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title" id="deleteAccountModalLabel">Delete Account</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you absolutely sure you want to delete your account? This action cannot be undone.</p>
+                    <div class="form-group">
+                        <label for="deleteConfirmPassword">Enter your password to confirm:</label>
+                        <input type="password" class="form-control mt-2" id="deleteConfirmPassword" placeholder="Password">
+                        <div id="deleteAccountError" class="alert alert-danger mt-2" style="display: none;"></div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="deleteAccount()">Delete Account</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spotify-style Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="feed.html" class="nav-item home-nav">
+            <i class="bi bi-house-fill"></i>
+            <span class="nav-text">Home</span>
+        </a>
+        <a href="explore.html" class="nav-item search-nav">
+            <i class="bi bi-search"></i>
+            <span class="nav-text">Search</span>
+        </a>
+        <a href="playlist.html" class="nav-item library-nav">
+            <i class="bi bi-music-note-list"></i>
+            <span class="nav-text">Library</span>
+        </a>
+        <a href="album.html" class="nav-item album-nav">
+            <i class="bi bi-collection"></i>
+            <span class="nav-text">Albums</span>
+        </a>
+        <a href="upload.html" class="nav-item upload-nav artist-only">
+            <i class="bi bi-cloud-upload"></i>
+            <span class="nav-text">Upload</span>
+        </a>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="sidebar.js"></script>
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!auth.initPageAuth()) return;
+            loadUserSettings();
+            
+            // Set the user type attribute on body based on account type
+            const userData = auth.getCurrentUser();
+            if (userData && userData.accountType === 'artist') {
+                document.body.setAttribute('data-user-type', 'artist');
+            }
+            
+            // Make sure bottom nav is visible on mobile screens
+            if (window.innerWidth <= 768) {
+                document.querySelector('.bottom-nav').style.display = 'flex';
+                
+                // Make sure mobile header is visible
+                const mobileHeader = document.querySelector('.mobile-header');
+                if (mobileHeader) {
+                    mobileHeader.style.display = 'flex';
+                }
+            }
+        });
+
+        // Navigation between sections
+        document.querySelectorAll('.settings-nav-item').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.settings-nav-item').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.settings-section').forEach(section => section.classList.remove('active'));
+                
+                button.classList.add('active');
+                document.getElementById(button.dataset.section + 'Settings').classList.add('active');
+            });
+        });
+
+        // Load user settings
+        function loadUserSettings() {
+            const userData = auth.getCurrentUser();
+            if (!userData) return;
+
+            document.getElementById('username').value = userData.username || '';
+            document.getElementById('bio').value = userData.bio || '';
+            document.getElementById('email').value = userData.email || '';
+            document.getElementById('accountType').value = userData.accountType || 'listener';
+            
+            if (userData.profilePhoto) {
+                document.getElementById('profilePhoto').src = userData.profilePhoto;
+            }
+
+            const socials = userData.socials || {};
+            document.getElementById('instagram').value = socials.instagram || '';
+            document.getElementById('twitter').value = socials.twitter || '';
+            document.getElementById('facebook').value = socials.facebook || '';
+            document.getElementById('youtube').value = socials.youtube || '';
+        }
+
+        // Handle profile photo upload
+        function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('profilePhoto').src = e.target.result;
+                // Store the photo in localStorage
+                const userData = auth.getCurrentUser();
+                userData.profilePhoto = e.target.result;
+                localStorage.setItem('userData', JSON.stringify(userData));
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Save profile settings
+        function saveProfileSettings() {
+            const userData = auth.getCurrentUser();
+            if (!userData) return;
+
+            const updatedData = {
+                ...userData,
+                username: document.getElementById('username').value,
+                bio: document.getElementById('bio').value,
+                socials: {
+                    instagram: document.getElementById('instagram').value,
+                    twitter: document.getElementById('twitter').value,
+                    facebook: document.getElementById('facebook').value,
+                    youtube: document.getElementById('youtube').value
+                }
+            };
+
+            localStorage.setItem('userData', JSON.stringify(updatedData));
+            showMessage('Profile settings saved successfully!', 'success');
+        }
+
+        // Change email
+        function changeEmail() {
+            const newEmail = prompt('Enter new email address:');
+            if (!newEmail) return;
+
+            const userData = auth.getCurrentUser();
+            userData.email = newEmail;
+            localStorage.setItem('userData', JSON.stringify(userData));
+            
+            document.getElementById('email').value = newEmail;
+            showMessage('Email updated successfully!', 'success');
+        }
+
+        // Password validation function
+        function validatePassword(password) {
+            const minLength = 8;
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasLowerCase = /[a-z]/.test(password);
+            const hasNumbers = /\d/.test(password);
+            const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+            const errors = [];
+            if (password.length < minLength) {
+                errors.push(`Password must be at least ${minLength} characters long`);
+            }
+            if (!hasUpperCase) {
+                errors.push('Password must contain at least one uppercase letter');
+            }
+            if (!hasLowerCase) {
+                errors.push('Password must contain at least one lowercase letter');
+            }
+            if (!hasNumbers) {
+                errors.push('Password must contain at least one number');
+            }
+            if (!hasSpecialChar) {
+                errors.push('Password must contain at least one special character');
+            }
+
+            return {
+                isValid: errors.length === 0,
+                errors: errors
+            };
+        }
+
+        // Password visibility toggle
+        function togglePasswordVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            const button = input.nextElementSibling;
+            const icon = button.querySelector('i');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            }
+
+            // Auto-hide password after 3 seconds if visible
+            if (input.type === 'text') {
+                setTimeout(() => {
+                    input.type = 'password';
+                    icon.classList.remove('bi-eye');
+                    icon.classList.add('bi-eye-slash');
+                }, 3000);
+            }
+        }
+
+        // Change password function
+        async function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Clear any existing error messages
+            clearErrors();
+
+            // Validate all fields are filled
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showMessage('Please fill in all password fields.', 'error');
+                return;
+            }
+
+            // Validate current password
+            const userData = auth.getCurrentUser();
+            if (currentPassword !== userData.password) {
+                showMessage('Current password is incorrect.', 'error');
+                document.getElementById('currentPassword').value = '';
+                return;
+            }
+
+            // Validate new password
+            const validation = validatePassword(newPassword);
+            if (!validation.isValid) {
+                showPasswordErrors(validation.errors);
+                return;
+            }
+
+            // Check if new password matches confirmation
+            if (newPassword !== confirmPassword) {
+                showMessage('New passwords do not match.', 'error');
+                return;
+            }
+
+            // Check if new password is same as current
+            if (newPassword === currentPassword) {
+                showMessage('New password must be different from current password.', 'error');
+                return;
+            }
+
+            try {
+                // Update password in userData
+                userData.password = newPassword;
+                localStorage.setItem('userData', JSON.stringify(userData));
+
+                // Update password in userAccounts
+                const allUsers = JSON.parse(localStorage.getItem('userAccounts')) || [];
+                const userIndex = allUsers.findIndex(user => user.username === userData.username);
+                if (userIndex !== -1) {
+                    allUsers[userIndex].password = newPassword;
+                    localStorage.setItem('userAccounts', JSON.stringify(allUsers));
+                }
+
+                // Update password in Appwrite
+                try {
+                    const appwriteConfig = JSON.parse(localStorage.getItem('appwriteConfig'));
+                    if (appwriteConfig) {
+                        // Make API call to update password in Appwrite
+                        const response = await fetch(`${appwriteConfig.endpoint}/account/password`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Appwrite-Project': appwriteConfig.projectId,
+                                'X-Appwrite-Key': appwriteConfig.apiKey
+                            },
+                            body: JSON.stringify({
+                                password: newPassword,
+                                oldPassword: currentPassword
+                            })
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Failed to update password in Appwrite');
+                        }
+                    }
+                } catch (appwriteError) {
+                    console.error('Appwrite password update error:', appwriteError);
+                    // Continue even if Appwrite update fails, as local update succeeded
+                }
+
+                // Clear password fields
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+
+                showMessage('Password updated successfully!', 'success');
+            } catch (error) {
+                showMessage('Error updating password. Please try again.', 'error');
+                console.error('Password update error:', error);
+            }
+        }
+
+        // Show password validation errors
+        function showPasswordErrors(errors) {
+            const errorList = errors.map(error => `<li>${error}</li>`).join('');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+            alertDiv.innerHTML = `
+                <strong>Password Requirements:</strong>
+                <ul class="mb-0">${errorList}</ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            const firstSection = document.querySelector('.settings-section.active');
+            firstSection.insertBefore(alertDiv, firstSection.firstChild);
+        }
+
+        // Clear error messages
+        function clearErrors() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => alert.remove());
+        }
+
+        // Add password strength indicator
+        document.getElementById('newPassword').addEventListener('input', function(e) {
+            const password = e.target.value;
+            const validation = validatePassword(password);
+            const strengthIndicator = this.parentElement.querySelector('.password-strength') || 
+                createStrengthIndicator(this.parentElement);
+            
+            updateStrengthIndicator(strengthIndicator, password, validation);
+        });
+
+        function createStrengthIndicator(container) {
+            const indicator = document.createElement('div');
+            indicator.className = 'password-strength mt-1';
+            indicator.innerHTML = `
+                <div class="strength-bar">
+                    <div class="strength-fill"></div>
+                </div>
+                <small class="strength-text text-secondary"></small>
+            `;
+            container.appendChild(indicator);
+            return indicator;
+        }
+
+        function updateStrengthIndicator(indicator, password, validation) {
+            const fill = indicator.querySelector('.strength-fill');
+            const text = indicator.querySelector('.strength-text');
+            
+            if (!password) {
+                fill.style.width = '0%';
+                fill.className = 'strength-fill';
+                text.textContent = '';
+                return;
+            }
+
+            const strength = calculatePasswordStrength(password, validation);
+            fill.style.width = `${strength}%`;
+            
+            if (strength < 25) {
+                fill.className = 'strength-fill weak';
+                text.textContent = 'Weak';
+            } else if (strength < 50) {
+                fill.className = 'strength-fill fair';
+                text.textContent = 'Fair';
+            } else if (strength < 75) {
+                fill.className = 'strength-fill good';
+                text.textContent = 'Good';
+            } else {
+                fill.className = 'strength-fill strong';
+                text.textContent = 'Strong';
+            }
+        }
+
+        function calculatePasswordStrength(password, validation) {
+            let strength = 0;
+            
+            // Length contribution (up to 25%)
+            strength += Math.min(25, (password.length / 12) * 25);
+            
+            // Character types contribution (25% for each type)
+            if (/[A-Z]/.test(password)) strength += 25;
+            if (/[a-z]/.test(password)) strength += 25;
+            if (/[0-9]/.test(password)) strength += 25;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 25;
+            
+            return Math.min(100, strength);
+        }
+
+        // Add these styles for password strength indicator
+        const style = document.createElement('style');
+        style.textContent = `
+            .password-strength {
+                margin-top: 5px;
+            }
+
+            .strength-bar {
+                height: 4px;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 2px;
+                overflow: hidden;
+            }
+
+            .strength-fill {
+                height: 100%;
+                width: 0;
+                transition: all 0.3s ease;
+            }
+
+            .strength-fill.weak { background: #dc3545; }
+            .strength-fill.fair { background: #ffc107; }
+            .strength-fill.good { background: #0dcaf0; }
+            .strength-fill.strong { background: #198754; }
+
+            .strength-text {
+                font-size: 0.8rem;
+                margin-top: 4px;
+                display: block;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Logout function
+        function logout() {
+            // Clear user session
+            localStorage.removeItem('userData');
+            
+            // Redirect to login page
+            window.location.href = 'login.html';
+        }
+
+        // Delete account
+        function deleteAccount() {
+            const password = document.getElementById('deleteConfirmPassword').value;
+            const userData = auth.getCurrentUser();
+            const errorDiv = document.getElementById('deleteAccountError');
+
+            if (!password) {
+                errorDiv.textContent = 'Please enter your password to confirm deletion.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Get the stored password from userAccounts to compare
+            const userAccounts = JSON.parse(localStorage.getItem('userAccounts')) || [];
+            const userAccount = userAccounts.find(user => user.username === userData.username);
+
+            if (!userAccount || password !== userAccount.password) {
+                errorDiv.textContent = 'Incorrect password.';
+                errorDiv.style.display = 'block';
+                document.getElementById('deleteConfirmPassword').value = '';
+                return;
+            }
+
+            try {
+                // Remove user data from localStorage
+                const updatedUsers = userAccounts.filter(user => user.username !== userData.username);
+                localStorage.setItem('userAccounts', JSON.stringify(updatedUsers));
+                
+                // Remove user's playlists
+                const allPlaylists = JSON.parse(localStorage.getItem('playlists')) || [];
+                const updatedPlaylists = allPlaylists.filter(playlist => playlist.createdBy !== userData.username);
+                localStorage.setItem('playlists', JSON.stringify(updatedPlaylists));
+                
+                // Remove user's songs
+                const allSongs = JSON.parse(localStorage.getItem('songs')) || [];
+                const updatedSongs = allSongs.filter(song => song.artistId !== userData.id);
+                localStorage.setItem('songs', JSON.stringify(updatedSongs));
+                
+                // Remove user's feed items
+                const allFeedItems = JSON.parse(localStorage.getItem('feedItems')) || [];
+                const updatedFeedItems = allFeedItems.filter(item => item.userId !== userData.id);
+                localStorage.setItem('feedItems', JSON.stringify(updatedFeedItems));
+                
+                // Remove user's likes and comments
+                const allLikes = JSON.parse(localStorage.getItem('likes')) || [];
+                const updatedLikes = allLikes.filter(like => like.userId !== userData.id);
+                localStorage.setItem('likes', JSON.stringify(updatedLikes));
+                
+                const allComments = JSON.parse(localStorage.getItem('comments')) || [];
+                const updatedComments = allComments.filter(comment => comment.userId !== userData.id);
+                localStorage.setItem('comments', JSON.stringify(updatedComments));
+                
+                // Clear user session
+                localStorage.removeItem('userData');
+                
+                // Close the modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('deleteAccountModal'));
+                if (modal) {
+                    modal.hide();
+                }
+                
+                // Redirect to index page
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Error deleting account:', error);
+                errorDiv.textContent = 'An error occurred while deleting your account. Please try again.';
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        // Show message
+        function showMessage(message, type = 'success') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            const firstSection = document.querySelector('.settings-section.active');
+            firstSection.insertBefore(alertDiv, firstSection.firstChild);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+        }
+
+        function changeAccountType(newType) {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            const oldType = userData.accountType;
+            
+            // Update user data
+            userData.accountType = newType;
+            localStorage.setItem('userData', JSON.stringify(userData));
+            
+            // Update user in userAccounts
+            const allUsers = JSON.parse(localStorage.getItem('userAccounts')) || [];
+            const userIndex = allUsers.findIndex(user => user.username === userData.username);
+            if (userIndex !== -1) {
+                allUsers[userIndex].accountType = newType;
+                localStorage.setItem('userAccounts', JSON.stringify(allUsers));
+            }
+            
+            // Show success message
+            showMessage(`Account type changed from ${oldType} to ${newType}. ${newType === 'artist' ? 'You can now upload music!' : 'You can no longer upload new content, but your existing content remains available.'}`, 'success');
+            
+            // Refresh sidebar to show/hide upload tab
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+        }
+
+        // In browser console:
+        const songs = JSON.parse(localStorage.getItem('songs'));
+        console.log('All uploaded songs:', songs);
+    </script>
+</body>
+</html> 

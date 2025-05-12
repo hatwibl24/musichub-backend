@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MusicHub - Upload Music</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/mobile.css">
+    <script src="sidebar.js"></script>
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            height: 100vh;
+            position: fixed;
+            width: var(--sidebar-width);
+            overflow-y: auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .nav-item i {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        #artistMenu {
+            display: none; /* Hidden by default, shown only for artists */
+        }
+
+        /* Mobile Header Bar */
+        .mobile-header {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .mobile-header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .mobile-header-icons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .header-icon {
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+            transition: color 0.2s ease;
+        }
+        
+        .header-icon:hover {
+            color: var(--accent-blue);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        /* Upload Form Styles */
+        .upload-container {
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .upload-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .upload-header h1 {
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        .artist-info {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+        }
+
+        .profile-photo-container {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .artist-avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-details {
+            flex: 1;
+        }
+
+        .artist-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .artist-bio {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .verified-badge {
+            color: var(--accent-blue);
+            font-size: 1.2rem;
+        }
+
+        .upload-type-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .upload-type-btn {
+            flex: 1;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .upload-type-btn.active {
+            border-color: var(--accent-blue);
+            background: rgba(0, 162, 255, 0.1);
+            color: var(--text-primary);
+            box-shadow: var(--neon-glow);
+        }
+
+        .upload-form {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-primary) !important;
+            padding: 0.75rem;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+            box-shadow: none;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Cover Upload Styles */
+        .cover-upload-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            cursor: pointer;
+        }
+
+        .cover-upload-container input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .cover-preview {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+        }
+
+        .cover-preview i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--accent-blue);
+        }
+
+        .cover-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .upload-zone {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--accent-blue);
+            background: rgba(0, 162, 255, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--accent-blue);
+            margin-bottom: 1rem;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .mobile-header {
+            display: flex;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .main-content {
+                width: 100%;
+                margin-left: 0;
+                margin-bottom: 60px; /* Make room for bottom nav */
+            }
+            
+            .upload-container {
+                padding: 0;
+            }
+            
+            .upload-header {
+                flex-direction: column;
+                align-items: flex-start;
+                margin-bottom: 1.5rem;
+            }
+            
+            .upload-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .artist-info {
+                padding: 1rem;
+            gap: 1rem;
+            }
+            
+            .profile-photo-container {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .artist-name {
+                font-size: 1.2rem;
+        }
+
+            .artist-bio {
+                font-size: 0.85rem;
+        }
+
+            .upload-type-selector {
+                flex-direction: column;
+                gap: 0.5rem;
+        }
+
+            .upload-form {
+                padding: 1rem;
+        }
+
+            .form-group {
+                margin-bottom: 1rem;
+        }
+
+            .cover-upload-container {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .upload-zone {
+                padding: 1rem;
+        }
+
+            .upload-icon {
+                font-size: 2rem;
+            }
+            
+            .bottom-nav {
+                display: flex;
+            }
+        }
+        
+        /* Bottom Navigation Bar Styles */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            padding: 0.75rem 1rem;
+            justify-content: space-between;
+        }
+        
+        .bottom-nav .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            padding: 0.5rem;
+            margin: 0;
+            border-radius: 0;
+            background: transparent;
+        }
+
+        .bottom-nav .nav-item i {
+            font-size: 1.2rem;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .bottom-nav .nav-item.active {
+            color: var(--accent-blue);
+        }
+        
+        .bottom-nav .nav-text {
+            font-size: 0.75rem;
+        }
+        
+        /* User type specific styling */
+        body[data-user-type="artist"] .artist-only {
+            display: flex !important;
+        }
+        
+        .artist-only {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="logo">
+            <i class="bi bi-music-note-beamed"></i>
+            <span>MusicHub</span>
+        </div>
+        <a href="feed.html" class="nav-item">
+            <i class="bi bi-house"></i>
+            <span class="nav-text">Home</span>
+        </a>
+        <a href="explore.html" class="nav-item">
+            <i class="bi bi-compass"></i>
+            <span class="nav-text">Explore</span>
+        </a>
+        <a href="album.html" class="nav-item">
+            <i class="bi bi-collection"></i>
+            <span class="nav-text">Albums</span>
+        </a>
+        <a href="playlist.html" class="nav-item">
+            <i class="bi bi-music-note-list"></i>
+            <span class="nav-text">Playlists</span>
+        </a>
+        <a href="upload.html" class="nav-item artist-only active">
+            <i class="bi bi-cloud-upload"></i>
+            <span class="nav-text">Upload</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <i class="bi bi-person"></i>
+            <span class="nav-text">Profile</span>
+        </a>
+        <a href="settings.html" class="nav-item">
+            <i class="bi bi-gear"></i>
+            <span class="nav-text">Settings</span>
+        </a>
+        <a href="help.html" class="nav-item">
+            <i class="bi bi-question-circle"></i>
+            <span class="nav-text">Help</span>
+        </a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="upload-container">
+        <!-- Mobile Header Bar -->
+        <div class="mobile-header">
+            <h1>Upload Music</h1>
+            <div class="mobile-header-icons">
+                <a href="profile.html" class="header-icon">
+                    <i class="bi bi-person"></i>
+                </a>
+                <a href="settings.html" class="header-icon">
+                    <i class="bi bi-gear"></i>
+                </a>
+                <a href="help.html" class="header-icon">
+                    <i class="bi bi-question-circle"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="artist-info">
+            <div class="profile-photo-container">
+                <img id="profilePhoto" src="assets/default-avatar.jpg" alt="Artist Avatar" class="artist-avatar">
+            </div>
+            <div class="profile-details">
+                <div class="artist-name">
+                    <span id="artistNameDisplay">Loading...</span>
+                    <i class="bi bi-patch-check-fill verified-badge" id="verifiedBadge" style="display: none;"></i>
+                </div>
+                <p id="artistBio" class="artist-bio">Loading bio...</p>
+            </div>
+        </div>
+
+        <div class="upload-type-selector">
+            <div class="upload-type-btn active" data-type="single">
+                <i class="bi bi-music-note"></i>
+                Single Track
+            </div>
+            <div class="upload-type-btn" data-type="album">
+                <i class="bi bi-collection"></i>
+                Album
+            </div>
+        </div>
+
+        <form class="upload-form" id="uploadForm">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="coverArt">Cover Art</label>
+                <div class="cover-upload-container">
+                    <input type="file" id="coverArt" accept="image/*" onchange="previewCover(this)" required>
+                    <div class="cover-preview" id="coverPreview">
+                        <i class="bi bi-image"></i>
+                        <span>Click to upload cover (required)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="albumFields" style="display: none;">
+                <div class="form-group">
+                    <label for="releaseDate">Release Date</label>
+                    <input type="date" id="releaseDate" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="albumType">Album Type</label>
+                    <select id="albumType" class="form-control">
+                        <option value="album">Full Album</option>
+                        <option value="ep">EP</option>
+                        <option value="single">Single</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Music File(s)</label>
+                <div class="upload-zone" id="musicUpload">
+                    <i class="bi bi-cloud-upload upload-icon"></i>
+                    <p>Click or drag to upload music files</p>
+                    <small class="text-secondary">Supported formats: MP3, WAV</small>
+                    <input type="file" hidden accept=".mp3,.wav" multiple>
+                </div>
+                <div class="track-list" id="trackList"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Genres</label>
+                <div class="genre-tags">
+                    <span class="genre-tag" data-genre="pop">Pop</span>
+                    <span class="genre-tag" data-genre="rock">Rock</span>
+                    <span class="genre-tag" data-genre="hiphop">Hip-Hop</span>
+                    <span class="genre-tag" data-genre="rnb">R&B</span>
+                    <span class="genre-tag" data-genre="electronic">Electronic</span>
+                    <span class="genre-tag" data-genre="jazz">Jazz</span>
+                    <span class="genre-tag" data-genre="classical">Classical</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" class="form-control" rows="3"></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%;">
+                Upload Music
+            </button>
+        </form>
+    </main>
+
+    <!-- Spotify-style Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="feed.html" class="nav-item home-nav">
+            <i class="bi bi-house-fill"></i>
+            <span class="nav-text">Home</span>
+        </a>
+        <a href="explore.html" class="nav-item search-nav">
+            <i class="bi bi-search"></i>
+            <span class="nav-text">Search</span>
+        </a>
+        <a href="playlist.html" class="nav-item library-nav">
+            <i class="bi bi-music-note-list"></i>
+            <span class="nav-text">Library</span>
+        </a>
+        <a href="album.html" class="nav-item album-nav">
+            <i class="bi bi-collection"></i>
+            <span class="nav-text">Albums</span>
+        </a>
+        <a href="upload.html" class="nav-item upload-nav artist-only active">
+            <i class="bi bi-cloud-upload"></i>
+            <span class="nav-text">Upload</span>
+        </a>
+    </nav>
+
+    <script src="js/song-manager.js"></script>
+    <script src="js/album-manager.js"></script>
+    <script>
+        // Check if user is logged in and is an artist
+        window.onload = function() {
+            const userData = localStorage.getItem('userData');
+            if (!userData) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const user = JSON.parse(userData);
+            if (!user.username) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Set the user type attribute on body
+            if (user.accountType === 'artist') {
+                document.body.setAttribute('data-user-type', 'artist');
+            } else {
+                // Redirect non-artists away from upload page
+                window.location.href = 'feed.html';
+            }
+
+            // Display artist info
+            document.getElementById('artistNameDisplay').textContent = user.artist?.artistName || user.username;
+            document.getElementById('profilePhoto').src = user.profile?.photo || 'assets/default-avatar.jpg';
+            document.getElementById('artistBio').textContent = user.bio || 'No bio added yet.';
+            
+            // Show verified badge if applicable (500+ followers)
+            if (user.followers >= 500) {
+                document.getElementById('verifiedBadge').style.display = 'inline-block';
+            }
+            
+            // Make sure bottom nav is visible on mobile screens
+            if (window.innerWidth <= 768) {
+                document.querySelector('.bottom-nav').style.display = 'flex';
+                
+                // Make sure mobile header is visible
+                const mobileHeader = document.querySelector('.mobile-header');
+                if (mobileHeader) {
+                    mobileHeader.style.display = 'flex';
+                }
+            }
+        }
+
+        // Toggle upload type
+        let isAlbumUpload = false;
+        document.querySelectorAll('.upload-type-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.upload-type-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                isAlbumUpload = btn.dataset.type === 'album';
+                document.getElementById('albumFields').style.display = isAlbumUpload ? 'block' : 'none';
+            });
+        });
+
+        // Handle genre selection
+        document.querySelectorAll('.genre-tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                tag.classList.toggle('selected');
+            });
+        });
+
+        // Handle music file uploads with drag and drop
+        const musicUploadInput = document.querySelector('#musicUpload input');
+        const trackList = document.getElementById('trackList');
+        let selectedMusicFiles = [];
+
+        document.getElementById('musicUpload').addEventListener('click', () => {
+            musicUploadInput.click();
+        });
+
+        document.getElementById('musicUpload').addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.currentTarget.classList.add('dragover');
+        });
+
+        document.getElementById('musicUpload').addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.currentTarget.classList.remove('dragover');
+        });
+
+        document.getElementById('musicUpload').addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.currentTarget.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            handleMusicFiles(files);
+        });
+
+        musicUploadInput.addEventListener('change', (e) => {
+            handleMusicFiles(e.target.files);
+        });
+
+        function handleMusicFiles(files) {
+            selectedMusicFiles = Array.from(files);
+            updateTrackList();
+        }
+
+        function updateTrackList() {
+            trackList.innerHTML = '';
+            selectedMusicFiles.forEach((file, index) => {
+                const trackItem = document.createElement('div');
+                trackItem.className = 'track-item';
+                trackItem.draggable = true;
+                trackItem.dataset.index = index;
+                
+                trackItem.innerHTML = `
+                    <span class="track-number">${index + 1}</span>
+                    <div class="track-info">
+                        <div class="track-title">
+                            <input type="text" class="form-control track-title-input" 
+                                value="${file.name.replace(/\.[^/.]+$/, '')}" 
+                                placeholder="Track title">
+                        </div>
+                        <small class="text-secondary">
+                            ${(file.size / (1024 * 1024)).toFixed(2)} MB
+                        </small>
+                    </div>
+                    <div class="track-controls">
+                        <i class="bi bi-grip-vertical handle"></i>
+                        <i class="bi bi-x-lg remove-track" onclick="removeTrack(${index})"></i>
+                    </div>
+                `;
+                
+                // Add drag and drop reordering
+                trackItem.addEventListener('dragstart', handleDragStart);
+                trackItem.addEventListener('dragover', handleDragOver);
+                trackItem.addEventListener('drop', handleDrop);
+                trackItem.addEventListener('dragend', handleDragEnd);
+                
+                trackList.appendChild(trackItem);
+            });
+        }
+
+        // Track reordering
+        let draggedItem = null;
+
+        function handleDragStart(e) {
+            draggedItem = this;
+            this.classList.add('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            const afterElement = getDragAfterElement(trackList, e.clientY);
+            const draggable = document.querySelector('.dragging');
+            if (afterElement) {
+                trackList.insertBefore(draggable, afterElement);
+            } else {
+                trackList.appendChild(draggable);
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+        }
+
+        function handleDragEnd() {
+            this.classList.remove('dragging');
+            updateTrackNumbers();
+            reorderMusicFiles();
+        }
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.track-item:not(.dragging)')]
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        function updateTrackNumbers() {
+            document.querySelectorAll('.track-item').forEach((item, index) => {
+                item.querySelector('.track-number').textContent = index + 1;
+                item.dataset.index = index;
+            });
+        }
+
+        function reorderMusicFiles() {
+            const newOrder = Array.from(document.querySelectorAll('.track-item')).map(item => 
+                selectedMusicFiles[parseInt(item.dataset.index)]
+            );
+            selectedMusicFiles = newOrder;
+        }
+
+        function removeTrack(index) {
+            selectedMusicFiles.splice(index, 1);
+            updateTrackList();
+        }
+
+        // Handle form submission
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                // Show loading state
+                const submitButton = e.target.querySelector('button[type="submit"]');
+                const originalButtonText = submitButton.innerHTML;
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="bi bi-arrow-repeat"></i> Uploading...';
+
+                // Get user data
+                const userData = JSON.parse(localStorage.getItem('userData'));
+                if (!userData || !userData.username) {
+                    throw new Error('User data not found. Please log in again.');
+                }
+
+                // Get artist name - fallback to username if artist name is not available
+                const artistName = userData.artist?.artistName || userData.username;
+
+                // Validate inputs
+                const title = document.getElementById('title').value.trim();
+                const description = document.getElementById('description').value.trim();
+                const selectedGenres = Array.from(document.querySelectorAll('.genre-tag.selected'))
+                    .map(tag => tag.dataset.genre);
+                
+                if (!title) {
+                    throw new Error('Please enter a title');
+                }
+
+                const coverArtFile = document.getElementById('coverArt').files[0];
+                if (!coverArtFile) {
+                    throw new Error('Please select a cover art image');
+                }
+
+                if (selectedMusicFiles.length === 0) {
+                    throw new Error('Please select at least one music file');
+                }
+
+                if (selectedGenres.length === 0) {
+                    throw new Error('Please select at least one genre');
+                }
+                
+                // Get track titles
+                const trackTitles = Array.from(document.querySelectorAll('.track-title-input'))
+                    .map(input => input.value.trim());
+
+                // Upload songs first
+                const uploadedSongs = await Promise.all(selectedMusicFiles.map(async (musicFile, index) => {
+                    const songData = {
+                        title: trackTitles[index] || musicFile.name.replace(/\.[^/.]+$/, ''),
+                        artist: artistName,
+                        description: description,
+                        genres: selectedGenres
+                    };
+
+                    return await songManager.addSong(songData, musicFile, coverArtFile);
+                }));
+
+                // If this is an album upload, create the album
+                if (isAlbumUpload) {
+                    const albumData = {
+                        id: crypto.randomUUID(),
+                        title: title,
+                        artist: artistName,
+                        description: description,
+                        genres: selectedGenres,
+                        releaseDate: document.getElementById('releaseDate').value || new Date().toISOString(),
+                        songs: uploadedSongs.map(song => song.id),
+                        totalDuration: uploadedSongs.reduce((total, song) => total + song.duration, 0),
+                        plays: 0,
+                        likes: []
+                    };
+
+                    await albumManager.createAlbum(albumData, uploadedSongs, coverArtFile);
+                }
+
+                // Show success message
+                alert(`${isAlbumUpload ? 'Album' : 'Music'} uploaded successfully!`);
+                window.location.href = 'profile.html';
+
+            } catch (error) {
+                // Show error message
+                alert(error.message || 'Failed to upload music. Please try again.');
+                
+                // Reset button state
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonText;
+            }
+        });
+
+        // Preview cover art
+        function previewCover(input) {
+            const preview = document.getElementById('coverPreview');
+            const file = input.files[0];
+            
+            if (file) {
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    alert('Please select an image file');
+                    input.value = '';
+                    return;
+                }
+
+                // Validate file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Image file size must be less than 5MB');
+                    input.value = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Cover Preview">`;
+                }
+                reader.readAsDataURL(file);
+            } else {
+                preview.innerHTML = `
+                    <i class="bi bi-image"></i>
+                    <span>Click to upload cover</span>
+                `;
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

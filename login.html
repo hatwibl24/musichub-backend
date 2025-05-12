@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MusicHub - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --text-primary: #ffffff;
+            --text-secondary: #b0bec5;
+            --accent-blue: #00a2ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+            font-size: 16px;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin: 0;
+            padding: max(1rem, min(5vh, 2rem));
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        /* Dynamic Background */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: linear-gradient(45deg, #121212, #1a1a1a);
+            overflow: hidden;
+        }
+
+        .wave {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.3;
+            animation: wave 15s infinite linear;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--accent-blue) 0%,
+                transparent 10%,
+                transparent 45%,
+                var(--accent-blue) 55%
+            );
+        }
+
+        .wave:nth-child(2) {
+            animation-delay: -5s;
+            opacity: 0.2;
+        }
+
+        .wave:nth-child(3) {
+            animation-delay: -10s;
+            opacity: 0.1;
+        }
+
+        @keyframes wave {
+            0% { transform: rotate(0deg) scale(1.5); }
+            100% { transform: rotate(360deg) scale(1.5); }
+        }
+
+        .container {
+            width: min(100%, 400px);
+            background: rgba(30, 30, 30, 0.8);
+            padding: clamp(1.5rem, 5vw, 2rem);
+            border-radius: max(12px, min(2vw, 20px));
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1;
+            margin: 1rem;
+        }
+
+        .form-control {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            border: 2px solid rgba(255, 255, 255, 0.1) !important;
+            color: var(--text-primary) !important;
+            font-size: clamp(0.875rem, 2vw, 1rem) !important;
+            padding: max(0.5rem, min(1.5vh, 0.75rem)) max(0.75rem, min(2vw, 1rem)) !important;
+            height: auto !important;
+        }
+
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.08) !important;
+            border-color: var(--accent-blue) !important;
+            box-shadow: 0 0 10px rgba(0, 162, 255, 0.3) !important;
+        }
+
+        .form-label {
+            color: var(--text-secondary);
+            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-blue);
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            padding: max(0.75rem, min(2vh, 1rem)) !important;
+            font-size: clamp(0.875rem, 2vw, 1rem);
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0088dd;
+            transform: translateY(-2px);
+        }
+
+        .signup-link {
+            color: var(--text-secondary);
+            font-size: clamp(0.875rem, 2vw, 1rem);
+        }
+
+        .signup-link a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .signup-link a:hover {
+            color: var(--text-primary);
+        }
+
+        h2 {
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: max(1.5rem, min(4vh, 2rem));
+            text-align: center;
+            position: relative;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 600;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(50px, 30%);
+            height: 2px;
+            background: var(--accent-blue);
+        }
+
+        .password-input {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: max(0.75rem, min(2vw, 1rem));
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            padding: 0.5rem;
+            z-index: 2;
+        }
+
+        .password-toggle:hover {
+            color: var(--accent-blue);
+        }
+
+        .password-input input {
+            padding-right: max(2.5rem, min(6vw, 3rem));
+        }
+
+        .alert {
+            font-size: clamp(0.875rem, 2vw, 1rem);
+            padding: max(0.75rem, min(2vh, 1rem));
+            border-radius: max(8px, min(1.5vw, 12px));
+            margin-top: max(1rem, min(3vh, 1.5rem)) !important;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 480px) {
+            body {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 1.25rem;
+                margin: 0.5rem;
+            }
+
+            .form-control {
+                font-size: 16px !important; /* Prevent zoom on iOS */
+            }
+
+            .btn-primary {
+                padding: 0.75rem !important;
+            }
+
+            .password-toggle {
+                padding: 0.5rem;
+            }
+        }
+
+        /* Touch Device Optimizations */
+        @media (hover: none) {
+            .btn-primary:hover {
+                transform: none;
+            }
+
+            .password-toggle {
+                min-height: 44px;
+                min-width: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Dynamic Background -->
+    <div class="background-animation">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+
+    <div class="container">
+        <h2>LOGIN</h2>
+        <form id="loginForm">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <div class="password-input">
+                    <input type="password" class="form-control" id="password" required>
+                    <i class="bi bi-eye-slash password-toggle" onclick="togglePassword()"></i>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
+            <div class="signup-link text-center">
+                <p class="mb-0">Don't have an account? <a href="sign_up.html">Sign Up</a></p>
+            </div>
+        </form>
+        <div id="message" class="alert mt-3" style="display: none;"></div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        // Simple password toggle
+        function togglePassword() {
+            const input = document.getElementById('password');
+            const icon = document.querySelector('.password-toggle');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            }
+        }
+
+        // Simple message display
+        function showMessage(text, type) {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.className = `alert alert-${type} mt-3`;
+            message.style.display = 'block';
+            setTimeout(() => message.style.display = 'none', 3000);
+        }
+
+        // Handle form submission
+        document.getElementById('loginForm').onsubmit = function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const loginResult = Auth.login(email, password);
+            
+            if (loginResult) {
+                showMessage('Login successful!', 'success');
+                setTimeout(() => {
+                    // If login returns 'profile-pic', redirect there, otherwise go to feed
+                    window.location.href = loginResult === 'profile-pic' ? 'profile-pic.html' : 'feed.html';
+                }, 1000);
+            } else {
+                showMessage('Invalid email or password', 'danger');
+            }
+        };
+    </script>
+</body>
+</html>
+

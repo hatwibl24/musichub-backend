@@ -1,0 +1,1998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MusicHub - Explore</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/mobile.css">
+    <script src="js/user-management.js"></script>
+    <script src="js/user-utils.js"></script>
+    <style>
+        :root {
+            --bg-primary: #121212;
+            --bg-secondary: #181818;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B3B3B3;
+            --accent-blue: #0066ff;
+            --accent-blue-hover: #0052cc;
+            --neon-glow: 0 0 10px rgba(0, 102, 255, 0.5);
+            --sidebar-width: 250px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            min-height: 100vh;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .content-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--neon-glow);
+        }
+
+        .content-card .like-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 2;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .content-card .like-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .content-card .artist-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .content-card .artist-link:hover {
+            color: var(--accent-blue);
+        }
+
+        .content-cover {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(45deg, var(--bg-primary), var(--bg-secondary));
+        }
+
+        .content-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .content-cover i {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            color: var(--accent-blue);
+        }
+
+        .content-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .content-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .content-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .content-meta {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .content-meta i {
+            color: var(--accent-blue);
+        }
+
+        .search-container {
+            background: linear-gradient(45deg, var(--bg-secondary), var(--accent-blue-hover));
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            font-size: 1.1rem;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-blue);
+            font-size: 1.2rem;
+        }
+
+        .genre-tag {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            margin: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .genre-tag:hover {
+            background: var(--accent-blue);
+            transform: scale(1.05);
+        }
+
+        .featured-artist {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+        }
+
+        .featured-artist img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .featured-artist-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: var(--text-primary);
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .chart-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .chart-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .chart-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .chart-rank {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--accent-blue);
+            margin-right: 1rem;
+            min-width: 2rem;
+        }
+
+        .user-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--neon-glow);
+            color: var(--text-primary);
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .verified-badge {
+            color: var(--accent-blue);
+            font-size: 0.9rem;
+        }
+
+        .user-meta {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .follow-btn {
+            background: transparent;
+            border: 2px solid var(--accent-blue);
+            color: var(--accent-blue);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .follow-btn:hover {
+            background: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        .search-filters {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 20px;
+        }
+
+        .filter-btn.active {
+            background: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        .filter-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .sidebar {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            z-index: 100;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .nav-item i {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .nav-text {
+            font-size: 1rem;
+        }
+
+        .follow-btn.following {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: var(--text-primary) !important;
+        }
+
+        .follow-btn.following:hover {
+            background: #dc3545 !important;
+            color: white !important;
+        }
+
+        .follow-btn.following:hover::after {
+            content: 'Unfollow';
+        }
+
+        .content-card {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .content-card .follow-btn {
+            position: relative;
+            z-index: 2;
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--neon-glow);
+        }
+
+        /* Mobile Optimizations */
+        @media screen and (max-width: 768px) {
+            body {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .main-content {
+                width: 100%;
+                margin-left: 0;
+                margin-bottom: 60px; /* Make room for bottom nav */
+                padding-top: 0;
+                padding-bottom: 80px; /* Extra padding to prevent content from being hidden by bottom nav */
+            }
+            
+            .mobile-header {
+                display: flex !important;
+                align-items: center;
+                justify-content: space-between;
+                padding: 1rem;
+                margin-bottom: 1rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                background-color: var(--bg-secondary);
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
+            
+            .mobile-header h1 {
+                margin: 0;
+                font-size: 1.5rem;
+            }
+            
+            .mobile-header-icons {
+                display: flex;
+                gap: 1rem;
+            }
+            
+            .header-icon {
+                color: var(--text-secondary);
+                font-size: 1.25rem;
+                transition: color 0.2s ease;
+            }
+            
+            .header-icon:hover, .header-icon.active {
+                color: var(--accent-blue);
+            }
+            
+            .search-container {
+                padding: 1rem;
+                margin-bottom: 2rem;
+            }
+
+            .content-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+
+            .search-filters {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 0.5rem;
+                margin-top: 0.5rem;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .filter-btn {
+                display: inline-block;
+                margin-right: 0.5rem;
+            }
+
+            .genre-tags {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 0.5rem;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .genre-tag {
+                display: inline-block;
+                margin-right: 0.5rem;
+            }
+        }
+
+        /* Small Mobile Devices */
+        @media screen and (max-width: 360px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-container {
+                padding: 0.75rem;
+            }
+
+            .search-input {
+                font-size: 1rem;
+                padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+            }
+        }
+
+        /* Explore-specific styles */
+        .explore-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .search-section {
+            background: linear-gradient(45deg, var(--bg-secondary), var(--accent-blue-hover));
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: var(--neon-glow);
+        }
+
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .filter-tag {
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .filter-tag.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .music-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .music-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .music-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .music-card-image {
+            width: 100%;
+            aspect-ratio: 1;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .music-card-content {
+            padding: 1rem;
+        }
+
+        .music-card-title {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .music-card-artist {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Mobile Optimizations */
+        @media screen and (max-width: 768px) {
+            .search-section {
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .search-box {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .filter-tags {
+                padding: 0.5rem 0;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                -webkit-overflow-scrolling: touch;
+                margin: -0.5rem -1rem;
+                padding: 0.5rem 1rem;
+            }
+
+            .filter-tag {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.85rem;
+                white-space: nowrap;
+            }
+
+            .section-title {
+                font-size: 1.25rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .music-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+
+            .music-card-content {
+                padding: 0.75rem;
+            }
+        }
+
+        /* Small Mobile Devices */
+        @media screen and (max-width: 360px) {
+            .search-section {
+                padding: 0.75rem;
+            }
+
+            .music-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 0.75rem;
+            }
+
+            .music-card-content {
+                padding: 0.5rem;
+            }
+
+            .music-card-title {
+                font-size: 0.9rem;
+            }
+
+            .music-card-artist {
+                font-size: 0.8rem;
+            }
+        }
+        
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            padding: 0.75rem 1rem;
+            justify-content: space-between;
+        }
+        
+        .bottom-nav .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            padding: 0.5rem;
+            margin: 0;
+            border-radius: 0;
+            background: transparent;
+        }
+        
+        .bottom-nav .nav-item i {
+            font-size: 1.2rem;
+            margin: 0 0 0.25rem 0;
+        }
+        
+        .bottom-nav .nav-item.active {
+            color: var(--accent-blue);
+        }
+        
+        .bottom-nav .nav-text {
+            font-size: 0.75rem;
+        }
+        
+        @media (max-width: 768px) {
+            .bottom-nav {
+                display: flex;
+            }
+        }
+
+        body[data-user-type="artist"] .artist-only {
+            display: flex !important;
+        }
+        
+        .artist-only {
+            display: none !important;
+        }
+
+        /* Add styles for verified artists */
+        .verified-tag {
+            background: var(--accent-blue);
+            color: white;
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+        
+        .artist-name {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="logo">
+            <i class="bi bi-music-note-beamed"></i>
+            <span>MusicHub</span>
+        </div>
+        <div class="nav-items">
+        <a href="feed.html" class="nav-item">
+            <i class="bi bi-house"></i>
+            <span class="nav-text">Home</span>
+        </a>
+        <a href="explore.html" class="nav-item active">
+            <i class="bi bi-compass"></i>
+            <span class="nav-text">Explore</span>
+        </a>
+        <a href="album.html" class="nav-item">
+            <i class="bi bi-collection"></i>
+            <span class="nav-text">Albums</span>
+        </a>
+        <a href="playlist.html" class="nav-item">
+            <i class="bi bi-music-note-list"></i>
+            <span class="nav-text">Playlists</span>
+        </a>
+        <a href="upload.html" class="nav-item artist-only">
+            <i class="bi bi-cloud-upload"></i>
+                <span class="nav-text">Upload</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <i class="bi bi-person"></i>
+            <span class="nav-text">Profile</span>
+        </a>
+        <a href="settings.html" class="nav-item">
+            <i class="bi bi-gear"></i>
+            <span class="nav-text">Settings</span>
+        </a>
+        <a href="help.html" class="nav-item">
+            <i class="bi bi-question-circle"></i>
+            <span class="nav-text">Help</span>
+        </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Mobile Header Bar -->
+        <div class="mobile-header">
+            <h1>Explore</h1>
+            <div class="mobile-header-icons">
+                <a href="profile.html" class="header-icon">
+                    <i class="bi bi-person"></i>
+                </a>
+                <a href="settings.html" class="header-icon">
+                    <i class="bi bi-gear"></i>
+                </a>
+                <a href="help.html" class="header-icon">
+                    <i class="bi bi-question-circle"></i>
+                </a>
+            </div>
+        </div>
+        
+        <div class="explore-container">
+        <!-- Search Section -->
+            <div class="search-section">
+            <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Search for songs, artists, or albums...">
+                    <button class="btn btn-primary">
+                        <i class="bi bi-search"></i>
+                        <span>Search</span>
+                    </button>
+            </div>
+                <div class="filter-tags">
+                    <div class="filter-tag active">All</div>
+                    <div class="filter-tag">Pop</div>
+                    <div class="filter-tag">Rock</div>
+                    <div class="filter-tag">Hip-Hop</div>
+                    <div class="filter-tag">Electronic</div>
+                    <div class="filter-tag">Jazz</div>
+                    <div class="filter-tag">Classical</div>
+            </div>
+        </div>
+
+            <!-- Trending Section -->
+        <section>
+                <h2 class="section-title">Trending Now</h2>
+                <div class="music-grid" id="trendingGrid">
+                    <!-- Content will be loaded dynamically -->
+            </div>
+        </section>
+
+            <!-- New Releases -->
+        <section>
+                <h2 class="section-title">New Releases</h2>
+                <div class="music-grid" id="newReleasesGrid">
+                    <!-- Content will be loaded dynamically -->
+            </div>
+        </section>
+                            </div>
+    </main>
+
+    <!-- Add mobile-friendly filter tags for explore page -->
+    <div class="filter-tags" style="display: none;">
+        <button class="filter-tag active">All</button>
+        <button class="filter-tag">Pop</button>
+        <button class="filter-tag">Rock</button>
+        <button class="filter-tag">Hip-Hop</button>
+        <button class="filter-tag">Electronic</button>
+        <button class="filter-tag">Jazz</button>
+        <button class="filter-tag">Classical</button>
+        <button class="filter-tag">R&B</button>
+        <button class="filter-tag">Country</button>
+                    </div>
+    
+    <!-- Spotify-style Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="feed.html" class="nav-item home-nav">
+            <i class="bi bi-house-fill"></i>
+            <span class="nav-text">Home</span>
+        </a>
+        <a href="explore.html" class="nav-item search-nav active">
+            <i class="bi bi-search"></i>
+            <span class="nav-text">Search</span>
+        </a>
+        <a href="playlist.html" class="nav-item library-nav">
+            <i class="bi bi-music-note-list"></i>
+            <span class="nav-text">Library</span>
+        </a>
+        <a href="album.html" class="nav-item album-nav">
+            <i class="bi bi-collection"></i>
+            <span class="nav-text">Albums</span>
+        </a>
+        <a href="upload.html" class="nav-item upload-nav artist-only">
+            <i class="bi bi-cloud-upload"></i>
+            <span class="nav-text">Upload</span>
+        </a>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="sidebar.js"></script>
+    <script src="scripts/audioPlayer.js"></script>
+    <script src="js/social-interactions.js"></script>
+    <script>
+        // Sample data structure for content
+        const contentData = {
+            users: [
+                { type: 'user', name: 'John Doe', playlists: 12, followers: 234, genres: ['Pop', 'Rock'] },
+                { type: 'user', name: 'Jane Smith', playlists: 8, followers: 156, genres: ['HipHop', 'Jazz'] },
+                { type: 'user', name: 'Mike Johnson', playlists: 15, followers: 342, genres: ['Electronic', 'Pop'] }
+            ],
+            artists: [
+                { type: 'artist', name: 'Taylor Swift', followers: '1.2M', genres: ['Pop', 'Country'] },
+                { type: 'artist', name: 'Ed Sheeran', followers: '2.1M', genres: ['Pop', 'Folk'] },
+                { type: 'artist', name: 'Drake', followers: '1.8M', genres: ['HipHop', 'Rap'] }
+            ],
+            songs: [
+                { type: 'song', title: 'Shape of You', artist: 'Ed Sheeran', genre: 'Pop' },
+                { type: 'song', title: 'God\'s Plan', artist: 'Drake', genre: 'HipHop' },
+                { type: 'song', title: 'Anti-Hero', artist: 'Taylor Swift', genre: 'Pop' },
+                { type: 'song', title: 'Starboy', artist: 'The Weeknd', genre: 'R&B' }
+            ],
+            albums: [
+                { type: 'album', title: 'Midnights', artist: 'Taylor Swift', genre: 'Pop' },
+                { type: 'album', title: 'Divide', artist: 'Ed Sheeran', genre: 'Pop' },
+                { type: 'album', title: 'Certified Lover Boy', artist: 'Drake', genre: 'HipHop' }
+            ]
+        };
+
+        let currentFilter = 'All';
+        let currentGenre = null;
+        let searchQuery = '';
+
+        // Update welcome message with username
+        document.addEventListener('DOMContentLoaded', function() {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            if (userData && userData.username) {
+                document.getElementById('welcomeUsername').textContent = userData.username;
+            }
+        });
+
+        // Search functionality
+        document.querySelector('.search-input').addEventListener('input', function(e) {
+            searchQuery = e.target.value.toLowerCase();
+            if (searchQuery) {
+                showSearchResults(searchQuery);
+            } else {
+                removeSearchResults();
+                applyFilters();
+            }
+        });
+
+        function showSearchResults(query) {
+            // Hide all regular sections
+            document.querySelectorAll('section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Remove existing search results if any
+            removeSearchResults();
+
+            // Create search results container
+            const searchResults = document.createElement('div');
+            searchResults.className = 'search-results';
+            searchResults.style.cssText = `
+                margin-top: 2rem;
+                animation: fadeIn 0.3s ease;
+            `;
+
+            // Get data from localStorage
+            const allUsers = JSON.parse(localStorage.getItem('userAccounts')) || [];
+            const allPlaylists = JSON.parse(localStorage.getItem('playlists')) || [];
+            const allSongs = JSON.parse(localStorage.getItem('songs')) || [];
+            const allAlbums = JSON.parse(localStorage.getItem('albums')) || [];
+
+            // Find matches in each category
+            const matchingUsers = allUsers.filter(user => 
+                user.username.toLowerCase().includes(query)
+            );
+
+            const matchingPlaylists = allPlaylists.filter(playlist => 
+                playlist.name.toLowerCase().includes(query) ||
+                playlist.createdBy.toLowerCase().includes(query)
+            );
+
+            const matchingSongs = allSongs.filter(song => 
+                song.title.toLowerCase().includes(query) ||
+                song.artist.toLowerCase().includes(query)
+            );
+
+            const matchingAlbums = allAlbums.filter(album => 
+                album.name.toLowerCase().includes(query) ||
+                album.artist.toLowerCase().includes(query)
+            );
+
+            let hasResults = false;
+
+            // Add results sections if there are matches
+            if (matchingUsers.length) {
+                hasResults = true;
+                searchResults.appendChild(createResultSection('Users', matchingUsers));
+            }
+
+            if (matchingPlaylists.length) {
+                hasResults = true;
+                searchResults.appendChild(createResultSection('Playlists', matchingPlaylists));
+            }
+
+            if (matchingSongs.length) {
+                hasResults = true;
+                searchResults.appendChild(createResultSection('Songs', matchingSongs));
+            }
+
+            if (matchingAlbums.length) {
+                hasResults = true;
+                searchResults.appendChild(createResultSection('Albums', matchingAlbums));
+            }
+
+            // Show no results message if nothing found
+            if (!hasResults) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results-message';
+                noResults.style.cssText = `
+                    text-align: center;
+                    padding: 3rem;
+                    background: var(--bg-secondary);
+                    border-radius: 12px;
+                    margin-top: 2rem;
+                    animation: fadeIn 0.3s ease;
+                `;
+                noResults.innerHTML = `
+                    <i class="bi bi-search" style="font-size: 3rem; color: var(--accent-blue); margin-bottom: 1rem; display: block;"></i>
+                    <h3 style="color: var(--text-primary); margin-bottom: 1rem;">No Results Found</h3>
+                    <p style="color: var(--text-secondary);">We couldn't find anything matching "${query}"</p>
+                    <p style="color: var(--text-secondary); margin-top: 0.5rem;">Try searching for:</p>
+                    <ul style="color: var(--text-secondary); list-style: none; padding: 0; margin-top: 0.5rem;">
+                        <li>• Usernames</li>
+                        <li>• Song titles</li>
+                        <li>• Playlist names</li>
+                        <li>• Album titles</li>
+                    </ul>
+                `;
+                document.querySelector('.search-container').insertAdjacentElement('afterend', noResults);
+            } else {
+                // Insert search results after search container
+                document.querySelector('.search-container').insertAdjacentElement('afterend', searchResults);
+            }
+        }
+
+        function createResultSection(title, items) {
+            const section = document.createElement('section');
+            section.className = 'search-result-section';
+            section.style.cssText = `
+                margin-bottom: 2rem;
+                background: var(--bg-secondary);
+                border-radius: 12px;
+                padding: 1.5rem;
+            `;
+
+            const titleEl = document.createElement('h2');
+            titleEl.className = 'section-title';
+            titleEl.style.marginBottom = '1.5rem';
+            titleEl.textContent = title;
+            section.appendChild(titleEl);
+
+            const content = document.createElement('div');
+            content.className = title.toLowerCase() === 'songs' ? 'chart-list' : 'content-grid';
+            
+            switch(title.toLowerCase()) {
+                case 'users':
+                    content.style.gridTemplateColumns = 'repeat(auto-fill, minmax(300px, 1fr))';
+                    content.innerHTML = items.map(user => `
+                        <div class="user-card" onclick="window.location.href='profile.html?username=${user.username}'">
+                            <div class="user-avatar">
+                                <img src="${user.profile?.photo || 'assets/default-avatar.jpg'}" alt="${user.username}">
+                            </div>
+                            <div class="user-info">
+                                <div class="content-title">${user.username}</div>
+                                <div class="user-stats">
+                                    <span><i class="bi bi-people"></i> ${user.followers ? user.followers.length : 0} Followers</span>
+                                    <span><i class="bi bi-person-badge"></i> ${user.accountType || 'Listener'}</span>
+                                </div>
+                            </div>
+                            ${user.username !== JSON.parse(localStorage.getItem('userData')).username ? 
+                                `<button class="follow-btn" onclick="handleFollow(event, '${user.username}')">
+                                    ${isFollowing(user.username) ? 'Following' : 'Follow'}
+                                </button>` : ''
+                            }
+                        </div>
+                    `).join('');
+                    break;
+
+                case 'playlists':
+                    content.innerHTML = items.map(playlist => `
+                        <div class="content-card" onclick="window.location.href='playlist.html?id=${playlist.id}'">
+                            <div class="content-cover">
+                                <img src="${playlist.coverArt || 'assets/default-cover.jpg'}" alt="${playlist.name}">
+                            </div>
+                            <div class="content-info">
+                                <div class="content-title">${playlist.name}</div>
+                                <a href="profile.html?username=${playlist.createdBy}" class="artist-link content-subtitle" 
+                                   onclick="event.stopPropagation()">By ${playlist.createdBy}</a>
+                                <div class="content-meta">
+                                    <span><i class="bi bi-music-note"></i> ${playlist.songs ? playlist.songs.length : 0} tracks</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                    break;
+                    
+                case 'songs':
+                    content.innerHTML = items.map((song, index) => `
+                        <li class="chart-item" onclick="playSong('${song.id}')">
+                            <span class="chart-rank">${index + 1}</span>
+                            <div class="content-info">
+                                <div class="content-title">${song.title}</div>
+                                <a href="profile.html?username=${song.artist}" class="artist-link content-subtitle" 
+                                   onclick="event.stopPropagation()">${song.artist}</a>
+                            </div>
+                            <button class="play-button">
+                                <i class="bi bi-play-fill"></i>
+                            </button>
+                        </li>
+                    `).join('');
+                    break;
+
+                case 'albums':
+                    content.innerHTML = items.map(album => `
+                        <div class="content-card" onclick="window.location.href='album.html?id=${album.id}'">
+                            <div class="content-cover">
+                                <img src="${album.coverArt || 'assets/default-cover.jpg'}" alt="${album.name}">
+                            </div>
+                            <div class="content-info">
+                                <div class="content-title">${album.name}</div>
+                                <a href="profile.html?username=${album.artist}" class="artist-link content-subtitle" 
+                                   onclick="event.stopPropagation()">${album.artist}</a>
+                                <div class="content-meta">
+                                    <span><i class="bi bi-music-note"></i> ${album.tracks ? album.tracks.length : 0} tracks</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                    break;
+            }
+
+            section.appendChild(content);
+            return section;
+        }
+
+        function isFollowing(username) {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            return userData.following && userData.following.includes(username);
+        }
+
+        function handleFollow(event, username) {
+            event.stopPropagation();
+            
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            const allUsers = JSON.parse(localStorage.getItem('userAccounts')) || [];
+            
+            // Initialize following array if it doesn't exist
+            if (!userData.following) userData.following = [];
+            
+            const isFollowing = userData.following.includes(username);
+            const button = event.target;
+            
+            // Find target user and current user in allUsers
+            const targetUserIndex = allUsers.findIndex(user => user.username === username);
+            const currentUserIndex = allUsers.findIndex(user => user.username === userData.username);
+            
+            if (targetUserIndex === -1 || currentUserIndex === -1) return;
+            
+            // Initialize arrays if they don't exist
+            if (!allUsers[targetUserIndex].followers) allUsers[targetUserIndex].followers = [];
+            if (!allUsers[currentUserIndex].following) allUsers[currentUserIndex].following = [];
+            
+            if (isFollowing) {
+                // Unfollow logic
+                userData.following = userData.following.filter(u => u !== username);
+                allUsers[currentUserIndex].following = allUsers[currentUserIndex].following.filter(u => u !== username);
+                allUsers[targetUserIndex].followers = allUsers[targetUserIndex].followers.filter(u => u !== userData.username);
+                
+                button.textContent = 'Follow';
+                button.classList.remove('following');
+            } else {
+                // Follow logic
+                userData.following.push(username);
+                allUsers[currentUserIndex].following.push(username);
+                allUsers[targetUserIndex].followers.push(userData.username);
+                
+                button.textContent = 'Following';
+                button.classList.add('following');
+            }
+            
+            // Update localStorage
+            localStorage.setItem('userData', JSON.stringify(userData));
+            localStorage.setItem('userAccounts', JSON.stringify(allUsers));
+            
+            // Update the UI immediately
+            const userCard = button.closest('.user-card');
+            if (userCard) {
+                const followerCountSpan = userCard.querySelector('.user-stats span:first-child');
+                if (followerCountSpan) {
+                    const newCount = allUsers[targetUserIndex].followers.length;
+                    followerCountSpan.innerHTML = `<i class="bi bi-people"></i> ${newCount} Followers`;
+                }
+            }
+        }
+
+        function removeSearchResults() {
+            const existingResults = document.querySelector('.search-results');
+            if (existingResults) {
+                existingResults.remove();
+            }
+            // Show all sections if search is cleared
+            if (!searchQuery) {
+                document.querySelectorAll('section').forEach(section => {
+                    section.style.display = 'block';
+                });
+            }
+        }
+
+        // Add animation styles
+        const animationStyle = document.createElement('style');
+        animationStyle.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .search-result-section {
+                animation: fadeIn 0.3s ease;
+            }
+            .content-meta {
+                font-size: 0.8rem;
+                color: var(--text-secondary);
+                margin-top: 0.5rem;
+            }
+            .content-meta span {
+                background: rgba(255, 255, 255, 0.1);
+                padding: 0.25rem 0.5rem;
+                border-radius: 12px;
+                display: inline-block;
+                margin: 0.25rem;
+            }
+        `;
+        document.head.appendChild(animationStyle);
+
+        // Content type filter functionality
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+                // Update current filter
+                currentFilter = this.textContent.trim();
+                applyFilters();
+            });
+        });
+
+        // Genre filter functionality
+        document.querySelectorAll('.genre-tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                const wasActive = this.classList.contains('active');
+                
+                // Remove active class from all genre tags
+                document.querySelectorAll('.genre-tag').forEach(t => t.classList.remove('active'));
+                
+                if (!wasActive) {
+                    // Add active class to clicked tag
+                    this.classList.add('active');
+                    currentGenre = this.textContent.replace('#', '');
+                } else {
+                    currentGenre = null;
+                }
+                
+                applyFilters();
+            });
+        });
+
+        // Follow button functionality
+        document.querySelectorAll('.follow-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const isFollowing = this.textContent === 'Following';
+                this.textContent = isFollowing ? 'Follow' : 'Following';
+                this.style.background = isFollowing ? 'transparent' : 'var(--accent-blue)';
+                this.style.color = isFollowing ? 'var(--accent-blue)' : 'var(--text-primary)';
+            });
+        });
+
+        function applyFilters() {
+            // Get all content sections
+            const userSection = document.querySelector('section:nth-of-type(1)');
+            const artistSection = document.querySelector('section:nth-of-type(2)');
+            const chartsSection = document.querySelector('section:nth-of-type(3)');
+            const genreSection = document.querySelector('section:nth-of-type(4)');
+
+            // Helper function to check if content matches current filters
+            function matchesFilters(content) {
+                const matchesType = currentFilter === 'All' || content.type.toLowerCase() === currentFilter.toLowerCase();
+                const matchesGenre = !currentGenre || (content.genres && content.genres.includes(currentGenre)) || content.genre === currentGenre;
+                const matchesSearch = !searchQuery || 
+                    content.name?.toLowerCase().includes(searchQuery) || 
+                    content.title?.toLowerCase().includes(searchQuery) || 
+                    content.artist?.toLowerCase().includes(searchQuery);
+                
+                return matchesType && matchesGenre && matchesSearch;
+            }
+
+            // Filter and update each section
+            if (currentFilter === 'All' || currentFilter === 'Users') {
+                const filteredUsers = contentData.users.filter(matchesFilters);
+                updateUserSection(filteredUsers, userSection);
+            }
+
+            if (currentFilter === 'All' || currentFilter === 'Artists') {
+                const filteredArtists = contentData.artists.filter(matchesFilters);
+                updateArtistSection(filteredArtists, artistSection);
+            }
+
+            if (currentFilter === 'All' || currentFilter === 'Songs') {
+                const filteredSongs = contentData.songs.filter(matchesFilters);
+                updateSongsChart(filteredSongs, chartsSection);
+            }
+
+            // Show/hide sections based on current filter
+            userSection.style.display = (currentFilter === 'All' || currentFilter === 'Users') ? 'block' : 'none';
+            artistSection.style.display = (currentFilter === 'All' || currentFilter === 'Artists') ? 'block' : 'none';
+            chartsSection.style.display = (currentFilter === 'All' || currentFilter === 'Songs') ? 'block' : 'none';
+            genreSection.style.display = currentFilter === 'All' ? 'block' : 'none';
+
+            // Show no results message if needed
+            const hasResults = document.querySelector('section[style="display: block;"] .content-grid:not(:empty)') !== null;
+            showNoResults(!hasResults);
+        }
+
+        function updateUserSection(users, section) {
+            const grid = section.querySelector('.content-grid');
+            grid.innerHTML = users.map(user => {
+                const isFollowing = userManagement.isFollowing(currentUser.username, user.username);
+                return `
+                    <div class="user-card" onclick="userManagement.navigateToProfile('${user.username}')">
+                    <div class="user-avatar">
+                            <img src="${user.profile?.photo || 'assets/default-avatar.jpg'}" alt="${user.username}">
+                    </div>
+                    <div class="user-info">
+                            <div class="content-title">${user.username}</div>
+                        <div class="user-stats">
+                                <span><i class="bi bi-people"></i> ${user.followers ? user.followers.length : 0} Followers</span>
+                                <span><i class="bi bi-person-badge"></i> ${user.accountType || 'Listener'}</span>
+                        </div>
+                    </div>
+                        <button class="follow-btn ${isFollowing ? 'following' : ''}" 
+                                onclick="handleFollow(event, '${user.username}')">
+                            ${isFollowing ? 'Following' : 'Follow'}
+                        </button>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function updateArtistSection(artists, section) {
+            const grid = section.querySelector('.content-grid');
+            grid.innerHTML = artists.map(artist => {
+                const isFollowing = userManagement.isFollowing(currentUser.username, artist.username);
+                return `
+                    <div class="content-card" onclick="userManagement.navigateToProfile('${artist.username}')">
+                    <div class="content-cover">
+                            <img src="${artist.profile?.photo || 'assets/default-avatar.jpg'}" alt="${artist.username}">
+                    </div>
+                    <div class="content-info">
+                            <div class="content-title">${artist.username}</div>
+                            <div class="content-subtitle">${artist.followers ? artist.followers.length : 0} Followers</div>
+                            <button class="follow-btn mt-2 ${isFollowing ? 'following' : ''}" 
+                                    onclick="handleFollow(event, '${artist.username}')">
+                                ${isFollowing ? 'Following' : 'Follow'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateSongsChart(songs, section) {
+            const chartList = section.querySelector('.chart-list');
+            chartList.innerHTML = songs.map((song, index) => `
+                <li class="chart-item">
+                    <span class="chart-rank">${index + 1}</span>
+                    <div class="content-info">
+                        <div class="content-title">${song.title}</div>
+                        <div class="content-subtitle">${song.artist}</div>
+                    </div>
+                </li>
+            `).join('');
+        }
+
+        function showNoResults(show) {
+            let noResultsMsg = document.querySelector('.no-results-message');
+            if (show) {
+                if (!noResultsMsg) {
+                    noResultsMsg = document.createElement('div');
+                    noResultsMsg.className = 'no-results-message';
+                    noResultsMsg.style.cssText = `
+                        text-align: center;
+                        padding: 3rem;
+                        background: var(--bg-secondary);
+                        border-radius: 12px;
+                        margin: 2rem 0;
+                    `;
+                    noResultsMsg.innerHTML = `
+                        <i class="bi bi-search" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                        <h3>No Results Found</h3>
+                        <p>Try adjusting your filters or search terms</p>
+                    `;
+                    document.querySelector('.main-content').insertBefore(noResultsMsg, document.querySelector('section'));
+                }
+            } else if (noResultsMsg) {
+                noResultsMsg.remove();
+            }
+        }
+
+        // Add style for active genre tags
+        const style = document.createElement('style');
+        style.textContent = `
+            .genre-tag.active {
+                background: var(--accent-blue);
+                transform: scale(1.05);
+            }
+        `;
+        document.head.appendChild(style);
+
+        function playTrack(trackId) {
+            // Example track data - in a real app, this would come from your backend
+            const track = {
+                id: trackId,
+                title: "Song Title " + trackId,
+                artist: "Artist Name",
+                audioUrl: `assets/songs/song${trackId}.mp3`,
+                coverUrl: "assets/current-track.jpg"
+            };
+            audioPlayer.play(track);
+        }
+
+        // Populate content cards
+        function createContentCard(item) {
+            return `
+                <div class="content-card" onclick="handleCardClick(event, '${item.id}', '${item.type}')">
+                    <div class="like-btn" onclick="handleLike(event, '${item.id}', '${item.type}')" 
+                         data-${item.type}-id="${item.id}">
+                        <i class="bi ${isLiked(item.id, item.type) ? 'bi-heart-fill' : 'bi-heart'}"></i>
+                    </div>
+                    <div class="content-cover">
+                        <img src="${item.coverArt}" alt="${item.title}">
+                    </div>
+                    <div class="content-info">
+                        <div class="content-title">${item.title}</div>
+                        <a href="profile.html?username=${item.artist}" class="artist-link content-subtitle" 
+                           onclick="event.stopPropagation()">${item.artist}</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createUserCard(user) {
+            const followersCount = user.followers ? user.followers.length : 0;
+            const isFollowing = checkIfFollowing(user.username);
+            
+            return `
+                <div class="user-card">
+                    <div class="user-avatar">
+                        <img src="${user.profilePhoto || 'assets/default-avatar.jpg'}" alt="${user.username}">
+                    </div>
+                    <div class="user-info">
+                        <div class="content-title">${user.username}</div>
+                        <div class="user-stats">
+                            <span><i class="bi bi-people"></i> ${followersCount} Followers</span>
+                            <span><i class="bi bi-person-badge"></i> ${user.accountType}</span>
+                        </div>
+                        </div>
+                    <button class="follow-btn" onclick="handleFollow(event, '${user.username}')">
+                        ${isFollowing ? 'Following' : 'Follow'}
+                    </button>
+                    </div>
+            `;
+        }
+
+        function handleCardClick(event, id, type) {
+            if (event.target.closest('.like-btn') || event.target.closest('.artist-link')) {
+                return;
+            }
+            window.location.href = `${type}.html?id=${id}`;
+        }
+
+        function handleLike(event, id, type) {
+            event.stopPropagation();
+            
+            const currentUser = JSON.parse(localStorage.getItem('userData'));
+            if (!currentUser.likes) currentUser.likes = {};
+            if (!currentUser.likes[type]) currentUser.likes[type] = [];
+            
+            const items = JSON.parse(localStorage.getItem(`${type}s`)) || [];
+            const itemIndex = items.findIndex(item => item.id === id);
+            
+            if (itemIndex === -1) return;
+            
+            if (!items[itemIndex].likes) items[itemIndex].likes = [];
+            
+            const isLiked = currentUser.likes[type].includes(id);
+            const likeBtn = event.currentTarget;
+            
+            if (isLiked) {
+                // Unlike
+                currentUser.likes[type] = currentUser.likes[type].filter(itemId => itemId !== id);
+                items[itemIndex].likes = items[itemIndex].likes.filter(username => username !== currentUser.username);
+            } else {
+                // Like
+                currentUser.likes[type].push(id);
+                items[itemIndex].likes.push(currentUser.username);
+            }
+            
+            // Update UI
+            const icon = likeBtn.querySelector('i');
+            icon.className = `bi ${isLiked ? 'bi-heart' : 'bi-heart-fill'}`;
+            
+            const likesCount = items[itemIndex].likes.length;
+            const likesSpan = likeBtn.querySelector('.likes-count');
+            if (likesCount > 0) {
+                if (likesSpan) {
+                    likesSpan.textContent = `${likesCount} ${likesCount === 1 ? 'like' : 'likes'}`;
+                } else {
+                    const span = document.createElement('span');
+                    span.className = 'likes-count';
+                    span.textContent = `${likesCount} ${likesCount === 1 ? 'like' : 'likes'}`;
+                    likeBtn.appendChild(span);
+                }
+            } else if (likesSpan) {
+                likesSpan.remove();
+            }
+            
+            // Save changes
+            localStorage.setItem('userData', JSON.stringify(currentUser));
+            localStorage.setItem(`${type}s`, JSON.stringify(items));
+        }
+
+        function checkIfFollowing(username) {
+            const currentUser = JSON.parse(localStorage.getItem('userData'));
+            return currentUser.following && currentUser.following.includes(username);
+        }
+
+        function checkIfLiked(type, id) {
+            const currentUser = JSON.parse(localStorage.getItem('userData'));
+            if (!currentUser.likes) currentUser.likes = {};
+            if (!currentUser.likes[type]) currentUser.likes[type] = [];
+            return currentUser.likes[type].includes(id);
+        }
+
+        function loadContent() {
+            // Get all users from localStorage
+            const allUsers = JSON.parse(localStorage.getItem('userAccounts')) || [];
+            const currentUser = JSON.parse(localStorage.getItem('userData'));
+            
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Get all albums and playlists
+            const allAlbums = JSON.parse(localStorage.getItem('albums')) || [];
+            const allPlaylists = JSON.parse(localStorage.getItem('playlists')) || [];
+
+            // Clear existing content
+            document.querySelector('.main-content').innerHTML = `
+                <!-- Mobile Header Bar -->
+                <div class="mobile-header">
+                    <h1>Explore</h1>
+                    <div class="mobile-header-icons">
+                        <a href="profile.html" class="header-icon">
+                            <i class="bi bi-person"></i>
+                        </a>
+                        <a href="settings.html" class="header-icon">
+                            <i class="bi bi-gear"></i>
+                        </a>
+                        <a href="help.html" class="header-icon">
+                            <i class="bi bi-question-circle"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="search-container">
+                    <div class="search-box">
+                        <i class="bi bi-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search for users, artists, songs, or albums...">
+                    </div>
+                    <div class="search-filters">
+                        <button class="filter-btn active">All</button>
+                        <button class="filter-btn">Users</button>
+                        <button class="filter-btn">Artists</button>
+                        <button class="filter-btn">Albums</button>
+                        <button class="filter-btn">Playlists</button>
+                    </div>
+                </div>`;
+
+            // Filter users by account type
+            const artists = allUsers.filter(user => user.accountType === 'artist' && user.username !== currentUser.username);
+            const listeners = allUsers.filter(user => user.accountType !== 'artist' && user.username !== currentUser.username);
+
+            // Add artist section if there are artists
+            if (artists.length > 0) {
+                const artistsSection = document.createElement('section');
+                artistsSection.innerHTML = `
+                    <h2 class="section-title">Artists to Follow</h2>
+                    <div class="content-grid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+                        ${artists.map(artist => {
+                            const isFollowing = currentUser.following && currentUser.following.includes(artist.username);
+                            return `
+                                <div class="user-card" onclick="userManagement.navigateToProfile('${artist.username}')">
+                                    <div class="user-avatar">
+                                        <img src="${artist.profile?.photo || 'assets/default-avatar.jpg'}" alt="${artist.username}" onerror="this.src='assets/default-avatar.jpg'">
+                                    </div>
+                                    <div class="user-info">
+                                        <div class="content-title">${artist.username}</div>
+                                        <div class="user-stats">
+                                            <span><i class="bi bi-people"></i> ${artist.followers ? artist.followers.length : 0} Followers</span>
+                                            <span><i class="bi bi-music-note"></i> Artist</span>
+                                        </div>
+                                    </div>
+                                    <button class="follow-btn ${isFollowing ? 'following' : ''}" 
+                                            onclick="handleFollow(event, '${artist.username}')">
+                                        ${isFollowing ? 'Following' : 'Follow'}
+                                    </button>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+                document.querySelector('.main-content').appendChild(artistsSection);
+            }
+
+            // Add listener section if there are listeners
+            if (listeners.length > 0) {
+                const listenersSection = document.createElement('section');
+                listenersSection.innerHTML = `
+                    <h2 class="section-title">Music Fans to Follow</h2>
+                    <div class="content-grid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+                        ${listeners.map(listener => {
+                            const isFollowing = currentUser.following && currentUser.following.includes(listener.username);
+                            return `
+                                <div class="user-card" onclick="userManagement.navigateToProfile('${listener.username}')">
+                                    <div class="user-avatar">
+                                        <img src="${listener.profile?.photo || 'assets/default-avatar.jpg'}" alt="${listener.username}" onerror="this.src='assets/default-avatar.jpg'">
+                                    </div>
+                                    <div class="user-info">
+                                        <div class="content-title">${listener.username}</div>
+                                        <div class="user-stats">
+                                            <span><i class="bi bi-people"></i> ${listener.followers ? listener.followers.length : 0} Followers</span>
+                                            <span><i class="bi bi-person"></i> Listener</span>
+                                        </div>
+                                    </div>
+                                    <button class="follow-btn ${isFollowing ? 'following' : ''}" 
+                                            onclick="handleFollow(event, '${listener.username}')">
+                                            ${isFollowing ? 'Following' : 'Follow'}
+                                        </button>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+                document.querySelector('.main-content').appendChild(listenersSection);
+            }
+
+            // Only show popular albums if there are albums
+            if (allAlbums.length > 0) {
+                const albumsSection = document.createElement('section');
+                albumsSection.innerHTML = `
+                    <h2 class="section-title">Popular Albums</h2>
+                    <div class="content-grid">
+                        ${allAlbums.map(album => {
+                            const likesCount = album.likes ? album.likes.length : 0;
+                            const isLiked = checkIfLiked('album', album.id);
+                            return `
+                                <div class="content-card" onclick="window.location.href='album.html?id=${album.id}'">
+                                    <div class="like-btn" onclick="handleLike(event, '${album.id}', 'album')">
+                                        <i class="bi ${isLiked ? 'bi-heart-fill' : 'bi-heart'}"></i>
+                                        ${likesCount > 0 ? `<span class="likes-count">${likesCount} ${likesCount === 1 ? 'like' : 'likes'}</span>` : ''}
+                                    </div>
+                                    <div class="content-cover">
+                                        <img src="${album.coverArt || 'assets/default-cover.jpg'}" alt="${album.name}" onerror="this.src='assets/default-cover.jpg'">
+                                    </div>
+                                    <div class="content-info">
+                                        <div class="content-title">${album.name}</div>
+                                        <a href="profile.html?username=${album.artist}" class="artist-link content-subtitle" 
+                                           onclick="event.stopPropagation()">${album.artist}</a>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+                document.querySelector('.main-content').appendChild(albumsSection);
+            }
+
+            // Only show popular playlists if there are playlists
+            if (allPlaylists.length > 0) {
+                const playlistsSection = document.createElement('section');
+                playlistsSection.innerHTML = `
+                    <h2 class="section-title">Popular Playlists</h2>
+                    <div class="content-grid">
+                        ${allPlaylists.map(playlist => {
+                            const likesCount = playlist.likes ? playlist.likes.length : 0;
+                            const isLiked = checkIfLiked('playlist', playlist.id);
+                            return `
+                                <div class="content-card" onclick="window.location.href='playlist.html?id=${playlist.id}'">
+                                    <div class="like-btn" onclick="handleLike(event, '${playlist.id}', 'playlist')">
+                                        <i class="bi ${isLiked ? 'bi-heart-fill' : 'bi-heart'}"></i>
+                                        ${likesCount > 0 ? `<span class="likes-count">${likesCount} ${likesCount === 1 ? 'like' : 'likes'}</span>` : ''}
+                                    </div>
+                                    <div class="content-cover">
+                                        <img src="${playlist.coverArt || 'assets/default-cover.jpg'}" alt="${playlist.name}" onerror="this.src='assets/default-cover.jpg'">
+                                    </div>
+                                    <div class="content-info">
+                                        <div class="content-title">${playlist.name}</div>
+                                        <a href="profile.html?username=${playlist.createdBy}" class="artist-link content-subtitle" 
+                                           onclick="event.stopPropagation()">By ${playlist.createdBy}</a>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+                document.querySelector('.main-content').appendChild(playlistsSection);
+            }
+
+            // Show no content message if nothing is available
+            if (artists.length === 0 && listeners.length === 0 && allAlbums.length === 0 && allPlaylists.length === 0) {
+                const noContentMessage = document.createElement('div');
+                noContentMessage.className = 'no-content-message';
+                noContentMessage.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+                        <i class="bi bi-music-note" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                        <h3>No Content to Discover</h3>
+                        <p>Be the first to create and share content on MusicHub!</p>
+                    </div>
+                `;
+                document.querySelector('.main-content').appendChild(noContentMessage);
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in 
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            if (!userData) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Set user type attribute on body for artist-only elements
+            if (userData.accountType === 'artist') {
+                document.body.setAttribute('data-user-type', 'artist');
+            }
+
+            // Load dynamic content
+            loadContent();
+            
+            // Load sample trending music
+            loadTrendingContent();
+            
+            // Load sample new releases
+            loadNewReleasesContent();
+            
+            // Add event listeners for search and filters
+            const searchInput = document.querySelector('.search-input');
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    searchQuery = e.target.value.toLowerCase();
+                    if (searchQuery) {
+                        showSearchResults(searchQuery);
+                    } else {
+                        removeSearchResults();
+                    }
+                });
+            }
+            
+            // Add event listeners for filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.textContent.trim();
+                    if (searchQuery) {
+                        showSearchResults(searchQuery);
+                    }
+                });
+            });
+
+            // Make sure bottom nav is always visible on mobile
+            if (window.innerWidth <= 768) {
+                document.querySelector('.bottom-nav').style.display = 'flex';
+                
+                // Make sure mobile header is always visible
+                const mobileHeader = document.querySelector('.mobile-header');
+                if (mobileHeader) {
+                    mobileHeader.style.display = 'flex';
+                }
+            }
+
+            // Update verification status
+            userUtils.updateVerificationStatus();
+
+            // Load artists
+            const artists = JSON.parse(localStorage.getItem('userAccounts')) || [];
+            const artistGrid = document.getElementById('artistGrid');
+            
+            if (artistGrid) {
+                const artistsHtml = artists
+                    .filter(user => user.accountType === 'artist')
+                    .map(artist => `
+                        <div class="artist-card">
+                            <div class="artist-avatar">
+                                <img src="${artist.profile?.photo || 'assets/default-avatar.jpg'}" alt="${artist.username}">
+                            </div>
+                            <div class="artist-info">
+                                <h3 class="artist-name">
+                                    ${artist.username}
+                                    ${userUtils.getVerificationBadge(artist)}
+                                </h3>
+                                <p class="artist-followers">
+                                    <span class="count">${artist.followers?.length || 0}</span> followers
+                                </p>
+                                ${artist.followers?.length >= 150 ? 
+                                    '<span class="verified-tag">Verified Artist</span>' : ''}
+                            </div>
+                            <button class="follow-btn" onclick="toggleFollow('${artist.username}')">
+                                Follow
+                            </button>
+                        </div>
+                    `).join('');
+                
+                artistGrid.innerHTML = artistsHtml;
+            }
+        });
+        
+        function loadTrendingContent(genre = 'All') {
+            const trendingGrid = document.getElementById('trendingGrid');
+            if (!trendingGrid) return;
+            
+            // Get actual songs from localStorage
+            const allSongs = JSON.parse(localStorage.getItem('songs')) || [];
+            
+            // Filter by genre if needed
+            let filteredSongs = allSongs;
+            if (genre !== 'All') {
+                filteredSongs = allSongs.filter(song => 
+                    song.genres && 
+                    (song.genres.includes(genre) || 
+                     song.genres.map(g => g.toLowerCase()).includes(genre.toLowerCase()))
+                );
+            }
+            
+            if (filteredSongs.length === 0) {
+                trendingGrid.innerHTML = `
+                    <div class="empty-content" style="grid-column: 1/-1; text-align: center; padding: 2rem;">
+                        <i class="bi bi-music-note" style="font-size: 2rem; color: var(--text-secondary); margin-bottom: 1rem; display: block;"></i>
+                        <h3 style="color: var(--text-primary);">No ${genre} Music Found</h3>
+                        <p style="color: var(--text-secondary);">Try a different genre or check back later.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort songs by plays (if available) or randomly select some
+            const trendingSongs = [...filteredSongs]
+                .sort((a, b) => (b.plays || 0) - (a.plays || 0))
+                .slice(0, 6);
+            
+            trendingGrid.innerHTML = trendingSongs.map(song => `
+                <div class="music-card" onclick="playSong('${song.id}')">
+                    <div class="music-card-image">
+                        <img src="${song.coverArt || 'assets/default-cover.jpg'}" alt="${song.title}" onerror="this.src='assets/default-cover.jpg'">
+                    </div>
+                    <div class="music-card-content">
+                        <h3 class="music-card-title">${song.title}</h3>
+                        <p class="music-card-artist">${song.artist}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function loadNewReleasesContent(genre = 'All') {
+            const newReleasesGrid = document.getElementById('newReleasesGrid');
+            if (!newReleasesGrid) return;
+            
+            // Get actual albums from localStorage
+            const allAlbums = JSON.parse(localStorage.getItem('albums')) || [];
+            
+            // Filter by genre if needed
+            let filteredAlbums = allAlbums;
+            if (genre !== 'All') {
+                filteredAlbums = allAlbums.filter(album => 
+                    album.genres && 
+                    (album.genres.includes(genre) || 
+                     album.genres.map(g => g.toLowerCase()).includes(genre.toLowerCase()))
+                );
+            }
+            
+            if (filteredAlbums.length === 0) {
+                newReleasesGrid.innerHTML = `
+                    <div class="empty-content" style="grid-column: 1/-1; text-align: center; padding: 2rem;">
+                        <i class="bi bi-collection" style="font-size: 2rem; color: var(--text-secondary); margin-bottom: 1rem; display: block;"></i>
+                        <h3 style="color: var(--text-primary);">No ${genre} Albums Found</h3>
+                        <p style="color: var(--text-secondary);">Try a different genre or check back later.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort albums by release date (newest first)
+            const recentAlbums = [...filteredAlbums]
+                .sort((a, b) => {
+                    const dateA = a.releaseDate ? new Date(a.releaseDate) : new Date(0);
+                    const dateB = b.releaseDate ? new Date(b.releaseDate) : new Date(0);
+                    return dateB - dateA;
+                })
+                .slice(0, 6);
+            
+            newReleasesGrid.innerHTML = recentAlbums.map(album => `
+                <div class="music-card" onclick="openAlbum('${album.id}')">
+                    <div class="music-card-image">
+                        <img src="${album.coverArt || 'assets/default-cover.jpg'}" alt="${album.name}" onerror="this.src='assets/default-cover.jpg'">
+                    </div>
+                    <div class="music-card-content">
+                        <h3 class="music-card-title">${album.name}</h3>
+                        <p class="music-card-artist">${album.artist}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Helper function to play a song
+        function playSong(songId) {
+            // In a real app, this would play the song or navigate to the song page
+            console.log('Playing song with ID:', songId);
+            // You could implement an actual player or navigation here
+        }
+        
+        // Helper function to open an album
+        function openAlbum(albumId) {
+            // Navigate to the album page
+            window.location.href = `album.html?id=${albumId}`;
+        }
+
+        // Add event listeners for genre filters
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up genre filter tags
+            const filterTags = document.querySelectorAll('.filter-tag');
+            if (filterTags) {
+                filterTags.forEach(tag => {
+                    tag.addEventListener('click', function() {
+                        // Toggle active class
+                        document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        // Get the genre
+                        const genre = this.textContent.trim();
+                        
+                        // Update content with selected genre
+                        loadTrendingContent(genre);
+                        loadNewReleasesContent(genre);
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

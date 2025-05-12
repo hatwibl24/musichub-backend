@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Profile - MusicHub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/mobile.css">
+    <script src="sidebar.js"></script>
+    <script src="js/user-management.js"></script>
+    <script src="js/playlist-utils.js"></script>
+    <script src="js/playlist-manager.js"></script>
+    <script src="js/user-utils.js"></script>
+    <style>
+        body {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+            background-color: var(--bg-primary);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            grid-row: 1 / 2;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .nav-item i {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        #artistMenu {
+            display: none; /* Hidden by default, shown only for artists */
+        }
+        
+        /* Mobile Header Bar */
+        .mobile-header {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            margin-bottom: 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: var(--bg-secondary);
+        }
+        
+        .mobile-header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .mobile-header-icons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .header-icon {
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+            transition: color 0.2s ease;
+        }
+        
+        .header-icon:hover, .header-icon.active {
+            color: var(--accent-blue);
+        }
+
+        .main-content {
+            padding: 0;
+            overflow-y: auto;
+        }
+
+        /* Instagram-style Profile Header */
+        .profile-header {
+            padding: 1rem 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-top {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .profile-photo-container {
+            width: 150px;
+            height: 150px;
+            flex-shrink: 0;
+            position: relative;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .profile-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info-top {
+            flex: 1;
+        }
+
+        .profile-username-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .profile-username {
+            font-size: 1.8rem;
+            font-weight: 500;
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        .profile-edit-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .profile-edit-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .profile-follow-btn {
+            background: var(--accent-blue);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .profile-follow-btn:hover {
+            background: var(--accent-blue-hover);
+        }
+
+        .profile-follow-btn.following {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat {
+            cursor: pointer;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+        }
+
+        .profile-bio {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        /* Instagram-style Content Tabs */
+        .profile-tabs {
+            display: flex;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-tab {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .profile-tab.active {
+            color: var(--accent-blue);
+            border-bottom: 1px solid var(--accent-blue);
+        }
+
+        .profile-tab i {
+            margin-right: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Instagram-style Grid Content */
+        .profile-content {
+            padding: 0 0.5rem;
+            display: none;
+        }
+
+        .profile-content.active {
+            display: block;
+        }
+
+        .playlist-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3px;
+            margin-top: 0.5rem;
+        }
+
+        .playlist-card {
+            aspect-ratio: 1;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .playlist-card:hover {
+            opacity: 0.9;
+        }
+
+        .playlist-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .playlist-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+            padding: 0.5rem;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .playlist-card:hover .playlist-overlay {
+            opacity: 1;
+        }
+
+        .playlist-title {
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .playlist-meta {
+            display: flex;
+            align-items: center;
+            font-size: 0.7rem;
+            gap: 0.5rem;
+        }
+
+        .playlist-meta i {
+            font-size: 0.6rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .empty-state h3 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            padding: 0.75rem 1rem;
+            justify-content: space-between;
+        }
+        
+        .bottom-nav .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            padding: 0.5rem;
+            margin: 0;
+            border-radius: 0;
+            background: transparent;
+        }
+        
+        .bottom-nav .nav-item i {
+            font-size: 1.2rem;
+            margin: 0 0 0.25rem 0;
+        }
+        
+        .bottom-nav .nav-item.active {
+            color: var(--accent-blue);
+        }
+        
+        .bottom-nav .nav-text {
+            font-size: 0.75rem;
+        }
+
+        /* Social Links Styles */
+        .social-links-container {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            transition: color 0.2s ease;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            color: var(--accent-blue);
+        }
+
+        .social-link i {
+            font-size: 1.4rem;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            body {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+            display: none;
+            }
+            
+            .main-content {
+                width: 100%;
+                margin-left: 0;
+                margin-bottom: 60px; /* Make room for bottom nav */
+            }
+            
+            .mobile-header {
+            display: flex;
+            }
+            
+            .profile-top {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .profile-photo-container {
+                width: 100px;
+                height: 100px;
+            }
+
+            .profile-username-row {
+                justify-content: center;
+                gap: 0.5rem;
+            }
+
+            .profile-username {
+                font-size: 1.5rem;
+            }
+
+            .profile-stats {
+                justify-content: center;
+                gap: 1.5rem;
+            }
+
+            .profile-tab {
+                font-size: 0.75rem;
+            }
+
+            .profile-tab i {
+                margin-right: 0.25rem;
+            }
+            
+            .bottom-nav {
+            display: flex;
+            }
+
+            .social-links-container {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        }
+
+        /* User type specific styling */
+        body[data-user-type="artist"] .artist-only {
+            display: flex !important;
+        }
+        
+        .artist-only {
+            display: none !important;
+        }
+
+        .follower-info {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        .count {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        .verified-status {
+            color: var(--accent-blue);
+            margin-left: 0.5rem;
+        }
+        
+        .verification-progress {
+            color: var(--text-secondary);
+            margin-left: 0.5rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="logo">MusicHub</div>
+        <a href="feed.html" class="nav-item">
+            <i class="bi bi-house"></i>
+            <span class="nav-text">Home</span>
+        </a>
+        <a href="explore.html" class="nav-item">
+            <i class="bi bi-compass"></i>
+            <span class="nav-text">Explore</span>
+        </a>
+        <a href="album.html" class="nav-item">
+            <i class="bi bi-collection"></i>
+            <span class="nav-text">Albums</span>
+        </a>
+        <a href="playlist.html" class="nav-item">
+            <i class="bi bi-music-note-list"></i>
+            <span class="nav-text">Playlists</span>
+        </a>
+        <a href="upload.html" class="nav-item artist-only">
+            <i class="bi bi-cloud-upload"></i>
+            <span class="nav-text">Upload Music</span>
+        </a>
+        <a href="profile.html" class="nav-item active">
+            <i class="bi bi-person"></i>
+            <span class="nav-text">Profile</span>
+        </a>
+        <a href="settings.html" class="nav-item">
+            <i class="bi bi-gear"></i>
+            <span class="nav-text">Settings</span>
+        </a>
+        <a href="help.html" class="nav-item">
+            <i class="bi bi-question-circle"></i>
+            <span class="nav-text">Help</span>
+        </a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content instagram-profile">
+        <!-- Mobile Header Bar -->
+        <div class="mobile-header">
+            <h1>Profile</h1>
+            <div class="mobile-header-icons">
+                <a href="profile.html" class="header-icon active">
+                    <i class="bi bi-person"></i>
+                </a>
+                <a href="settings.html" class="header-icon">
+                    <i class="bi bi-gear"></i>
+                </a>
+                <a href="help.html" class="header-icon">
+                    <i class="bi bi-question-circle"></i>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Instagram-style Profile Header -->
+        <div class="profile-header">
+            <div class="profile-top">
+                <div class="profile-photo-container">
+                    <img src="assets/default-avatar.jpg" alt="Profile Photo" class="profile-photo" id="profilePhoto">
+                </div>
+                <div class="profile-info-top">
+                    <div class="profile-username-row">
+                        <h1 class="profile-username" id="profileUsername">Username</h1>
+                        <a href="settings.html" class="profile-edit-btn" id="editProfileBtn">
+                            Edit Profile
+                        </a>
+                        <!-- Follow button added by JS for other profiles -->
+                            </div>
+                    <div class="profile-stats">
+                        <div class="stat" onclick="showFollowers()">
+                            <span class="stat-value" id="followersCount">0</span> <span class="stat-label">followers</span>
+                        </div>
+                        <div class="stat" onclick="showFollowing()">
+                            <span class="stat-value" id="followingCount">0</span> <span class="stat-label">following</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="playlistCount">0</span> <span class="stat-label">posts</span>
+                        </div>
+                    </div>
+                    <div class="profile-bio" id="profileBio">
+                        No bio added yet.
+                        </div>
+                    <div class="social-links-container" id="socialLinksContainer">
+                        <a href="#" class="social-link" id="instagramLink" target="_blank" style="display: none">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link" id="twitterLink" target="_blank" style="display: none">
+                            <i class="bi bi-twitter-x"></i>
+                        </a>
+                        <a href="#" class="social-link" id="tiktokLink" target="_blank" style="display: none">
+                            <i class="bi bi-tiktok"></i>
+                        </a>
+                        <a href="#" class="social-link" id="youtubeLink" target="_blank" style="display: none">
+                            <i class="bi bi-youtube"></i>
+                        </a>
+                    </div>
+                    </div>
+                </div>
+
+            <!-- Instagram-style Content Tabs -->
+            <div class="profile-tabs">
+                <div class="profile-tab active" data-tab="playlists">
+                    <i class="bi bi-grid-3x3"></i> <span>Playlists</span>
+                </div>
+                <div class="profile-tab" data-tab="liked">
+                    <i class="bi bi-heart"></i> <span>Liked</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instagram-style Content -->
+        <div class="profile-content active" id="playlistsContent">
+            <div class="playlist-grid" id="playlistGrid">
+                <!-- Playlists will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="profile-content" id="likedContent">
+            <div class="playlist-grid" id="likedGrid">
+                <!-- Liked content will be populated here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Followers/Following Modal -->
+    <div class="users-modal" id="usersModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000;">
+        <div class="users-modal-content" style="position: relative; background: var(--bg-secondary); max-width: 500px; margin: 50px auto; padding: 20px; border-radius: 12px; max-height: 80vh; overflow-y: auto;">
+            <div class="users-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 class="users-modal-title" id="usersModalTitle" style="margin: 0; color: var(--text-primary);">Users</h3>
+                <button class="users-modal-close" onclick="closeUsersModal()" style="background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer;">&times;</button>
+            </div>
+            <div class="users-list" id="usersList" style="display: flex; flex-direction: column; gap: 15px;">
+                <!-- Users will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Spotify-style Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="feed.html" class="nav-item home-nav">
+            <i class="bi bi-house-fill"></i>
+            <span class="nav-text">Home</span>
+        </a>
+        <a href="explore.html" class="nav-item search-nav">
+            <i class="bi bi-search"></i>
+            <span class="nav-text">Search</span>
+        </a>
+        <a href="playlist.html" class="nav-item library-nav">
+            <i class="bi bi-music-note-list"></i>
+            <span class="nav-text">Library</span>
+        </a>
+        <a href="album.html" class="nav-item album-nav">
+            <i class="bi bi-collection"></i>
+            <span class="nav-text">Albums</span>
+        </a>
+        <a href="upload.html" class="nav-item upload-nav artist-only">
+            <i class="bi bi-cloud-upload"></i>
+            <span class="nav-text">Upload</span>
+        </a>
+    </nav>
+
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            if (!userData) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Initialize user data
+            const initializedData = userManagement.initializeUserData(userData);
+            localStorage.setItem('userData', JSON.stringify(initializedData));
+            
+            // Set user type attribute on body
+            if (userData.accountType === 'artist') {
+                document.body.setAttribute('data-user-type', 'artist');
+            }
+
+            // Get profile username from URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const profileUsername = urlParams.get('username');
+
+            if (!profileUsername) {
+                showUserProfile(initializedData);
+            } else {
+                const profileUser = userManagement.getUserProfile(profileUsername);
+                if (profileUser) {
+                    showOtherProfile(profileUser, initializedData);
+                } else {
+                    document.querySelector('.main-content').innerHTML = `
+                        <div class="alert alert-danger">User not found</div>
+                    `;
+                }
+            }
+
+            // Tab navigation
+            document.querySelectorAll('.profile-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    document.querySelectorAll('.profile-tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Hide all content sections
+                    document.querySelectorAll('.profile-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Show selected content
+                    const tabName = this.getAttribute('data-tab');
+                    document.getElementById(tabName + 'Content').classList.add('active');
+                });
+            });
+            
+            // Ensure mobile header is visible on small screens
+            if (window.innerWidth <= 768) {
+                let mobileHeader = document.querySelector('.mobile-header');
+                if (!mobileHeader) {
+                    mobileHeader = document.createElement('div');
+                    mobileHeader.className = 'mobile-header';
+                    mobileHeader.innerHTML = `
+                        <h1>Profile</h1>
+                        <div class="mobile-header-icons">
+                            <a href="profile.html" class="header-icon active">
+                                <i class="bi bi-person"></i>
+                            </a>
+                            <a href="settings.html" class="header-icon">
+                                <i class="bi bi-gear"></i>
+                            </a>
+                            <a href="help.html" class="header-icon">
+                                <i class="bi bi-question-circle"></i>
+                            </a>
+                        </div>
+                    `;
+                    const mainContent = document.querySelector('.main-content');
+                    mainContent.insertBefore(mobileHeader, mainContent.firstChild);
+                }
+            }
+
+            // Update verification status
+            userUtils.updateVerificationStatus();
+
+            // Load user profile data
+            const profileUsernameElement = document.getElementById('profileUsername');
+            const followerCount = document.getElementById('followersCount');
+            const verificationStatus = document.getElementById('verificationStatus');
+            
+            if (profileUsernameElement) {
+                profileUsernameElement.innerHTML = `
+                    ${userData.username}
+                    ${userUtils.getVerificationBadge(userData)}
+                `;
+            }
+
+            if (followerCount && userData.accountType === 'artist') {
+                const followers = userData.followers || [];
+                followerCount.innerHTML = `${followers.length}`;
+            }
+        });
+
+        function showUserProfile(userData) {
+            console.log('Showing user profile for:', userData.username);
+            document.getElementById('profileUsername').textContent = userData.username;
+            document.getElementById('profilePhoto').src = userData.profile?.photo || 'assets/default-avatar.jpg';
+            document.getElementById('profileBio').textContent = userData.bio || 'No bio added yet.';
+            
+            // Show edit profile button for own profile
+            document.getElementById('editProfileBtn').style.display = 'inline-flex';
+
+            // Display social media links
+            if (userData.social) {
+                const socialLinks = {
+                    instagram: { id: 'instagramLink', baseUrl: 'https://instagram.com/' },
+                    twitter: { id: 'twitterLink', baseUrl: 'https://twitter.com/' },
+                    tiktok: { id: 'tiktokLink', baseUrl: 'https://tiktok.com/@' },
+                    youtube: { id: 'youtubeLink', baseUrl: 'https://youtube.com/' }
+                };
+
+                for (const [platform, info] of Object.entries(socialLinks)) {
+                    const link = document.getElementById(info.id);
+                    if (userData.social[platform]) {
+                        link.href = info.baseUrl + userData.social[platform];
+                        link.style.display = 'inline-block';
+                    } else {
+                        link.style.display = 'none';
+                    }
+                }
+            }
+
+            updateStats(userData.username);
+            loadUserPlaylists(userData.username);
+            loadLikedContent(userData.username);
+        }
+
+        function showOtherProfile(profileUser, currentUser) {
+            console.log('Showing other user profile for:', profileUser.username);
+            document.getElementById('profileUsername').textContent = profileUser.username;
+            document.getElementById('profilePhoto').src = profileUser.profile?.photo || 'assets/default-avatar.jpg';
+            document.getElementById('profileBio').textContent = profileUser.bio || 'No bio added yet.';
+
+            // Display social media links
+            if (profileUser.social) {
+                const socialLinks = {
+                    instagram: { id: 'instagramLink', baseUrl: 'https://instagram.com/' },
+                    twitter: { id: 'twitterLink', baseUrl: 'https://twitter.com/' },
+                    tiktok: { id: 'tiktokLink', baseUrl: 'https://tiktok.com/@' },
+                    youtube: { id: 'youtubeLink', baseUrl: 'https://youtube.com/' }
+                };
+
+                for (const [platform, info] of Object.entries(socialLinks)) {
+                    const link = document.getElementById(info.id);
+                    if (profileUser.social[platform]) {
+                        link.href = info.baseUrl + profileUser.social[platform];
+                        link.style.display = 'inline-block';
+                    } else {
+                        link.style.display = 'none';
+                    }
+                }
+            }
+
+            // Hide edit button and show follow button
+            document.getElementById('editProfileBtn').style.display = 'none';
+            
+            const isUserFollowing = userManagement.isFollowing(currentUser.username, profileUser.username);
+            
+            const followBtn = document.createElement('button');
+            followBtn.className = `profile-follow-btn ${isUserFollowing ? 'following' : ''}`;
+            followBtn.textContent = isUserFollowing ? 'Following' : 'Follow';
+            followBtn.onclick = () => handleFollow(profileUser.username);
+            
+            document.querySelector('.profile-username-row').appendChild(followBtn);
+
+            updateStats(profileUser.username);
+            loadUserPlaylists(profileUser.username);
+            loadLikedContent(profileUser.username);
+        }
+
+        function handleFollow(targetUsername) {
+            const isNowFollowing = userManagement.toggleFollow(targetUsername);
+            updateFollowButton(targetUsername, isNowFollowing);
+            updateStats(targetUsername);
+        }
+
+        function updateStats(username) {
+            const followers = userManagement.getFollowers(username);
+            const following = userManagement.getFollowing(username);
+            const playlists = playlistManager.getUserPlaylists(username);
+
+            document.getElementById('followersCount').textContent = followers.length;
+            document.getElementById('followingCount').textContent = following.length;
+            document.getElementById('playlistCount').textContent = playlists.length;
+        }
+
+        function showFollowers() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const profileUsername = urlParams.get('username');
+            const currentUser = JSON.parse(localStorage.getItem('userData'));
+            const targetUser = profileUsername ? userManagement.getUserProfile(profileUsername) : currentUser;
+
+            if (!targetUser) return;
+
+            const followers = userManagement.getFollowers(targetUser.username);
+            showUsersModal('Followers', followers);
+        }
+
+        function showFollowing() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const profileUsername = urlParams.get('username');
+            const currentUser = JSON.parse(localStorage.getItem('userData'));
+            const targetUser = profileUsername ? userManagement.getUserProfile(profileUsername) : currentUser;
+
+            if (!targetUser) return;
+
+            const following = userManagement.getFollowing(targetUser.username);
+            showUsersModal('Following', following);
+        }
+
+        function showUsersModal(title, usernames) {
+            const modal = document.getElementById('usersModal');
+            const modalTitle = document.getElementById('usersModalTitle');
+            const usersList = document.getElementById('usersList');
+            const currentUser = JSON.parse(localStorage.getItem('userData'));
+
+            modalTitle.textContent = title;
+            usersList.innerHTML = '';
+
+            if (usernames.length === 0) {
+                usersList.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                        No ${title.toLowerCase()} yet
+                    </div>
+                `;
+            } else {
+                usernames.forEach(async (username) => {
+                    const user = userManagement.getUserProfile(username);
+                    if (!user) return;
+
+                    const isFollowing = userManagement.isFollowing(currentUser.username, user.username);
+                    const isCurrentUser = currentUser.username === user.username;
+
+                    const userItem = document.createElement('div');
+                    userItem.style.display = 'flex';
+                    userItem.style.alignItems = 'center';
+                    userItem.style.padding = '10px';
+                    userItem.style.gap = '15px';
+                    userItem.style.borderRadius = '8px';
+                    userItem.style.background = 'var(--bg-primary)';
+
+                    userItem.innerHTML = `
+                        <img src="${user.profile?.photo || 'assets/default-avatar.jpg'}" 
+                             alt="${user.username}" 
+                             style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; cursor: pointer;"
+                             onclick="userManagement.navigateToProfile('${user.username}')">
+                        <div style="flex: 1; cursor: pointer;" onclick="userManagement.navigateToProfile('${user.username}')">
+                            <div style="color: var(--text-primary); font-weight: 500;">
+                                ${user.username}
+                                ${user.isVerified ? '<i class="bi bi-patch-check-fill" style="color: var(--accent-blue);"></i>' : ''}
+                            </div>
+                            <div style="color: var(--text-secondary); font-size: 0.9em;">
+                                ${user.bio ? user.bio.substring(0, 50) + (user.bio.length > 50 ? '...' : '') : ''}
+                            </div>
+                        </div>
+                        ${!isCurrentUser ? `
+                            <button 
+                                onclick="handleFollowFromModal('${user.username}')"
+                                class="follow-btn ${isFollowing ? 'following' : ''}"
+                                style="padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; background: ${isFollowing ? 'transparent' : 'var(--accent-blue)'}; color: var(--text-primary); border: ${isFollowing ? '1px solid var(--text-secondary)' : 'none'};">
+                                ${isFollowing ? 'Following' : 'Follow'}
+                            </button>
+                        ` : ''}
+                    `;
+
+                    usersList.appendChild(userItem);
+                });
+            }
+
+            modal.style.display = 'block';
+        }
+
+        function handleFollowFromModal(username) {
+            const isNowFollowing = userManagement.toggleFollow(username);
+            const button = event.target;
+            
+            // Update button state
+            button.textContent = isNowFollowing ? 'Following' : 'Follow';
+            button.style.background = isNowFollowing ? 'transparent' : 'var(--accent-blue)';
+            button.style.border = isNowFollowing ? '1px solid var(--text-secondary)' : 'none';
+            
+            // Update stats
+            updateStats(username);
+        }
+
+        function closeUsersModal() {
+            document.getElementById('usersModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('usersModal');
+            if (event.target === modal) {
+                closeUsersModal();
+            }
+        }
+
+        // Helper functions
+        function updateFollowButton(username, isFollowing) {
+            const followBtn = document.querySelector('.profile-follow-btn');
+            if (followBtn) {
+                followBtn.textContent = isFollowing ? 'Following' : 'Follow';
+                followBtn.className = `profile-follow-btn ${isFollowing ? 'following' : ''}`;
+            }
+        }
+
+        function loadUserPlaylists(username) {
+            console.log('Loading playlists for user:', username);
+            const playlists = playlistManager.getUserPlaylists(username);
+            console.log('Found playlists:', playlists);
+            const playlistGrid = document.getElementById('playlistGrid');
+
+            if (!playlistGrid) {
+                console.error('Playlist grid element not found!');
+                return;
+            }
+
+            if (playlists.length === 0) {
+                console.log('No playlists found, showing empty state');
+                playlistGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="bi bi-music-note-list"></i>
+                        <h3>No Playlists Yet</h3>
+                        <p>
+                            ${username === JSON.parse(localStorage.getItem('userData')).username ? 
+                                'Create your first playlist to start organizing your music!' : 
+                                'This user hasn\'t created any playlists yet.'}
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
+            console.log('Rendering playlists to grid');
+            playlistGrid.innerHTML = playlists.map(playlist => `
+                <div class="playlist-card" onclick="window.location.href='playlist.html?id=${playlist.id}'">
+                        <img src="${playlist.coverArt}" alt="${playlist.name}" onerror="this.src='${createDefaultPlaylistCover(playlist.name)}'">
+                    <div class="playlist-overlay">
+                        <div class="playlist-title">${playlist.name}</div>
+                        <div class="playlist-meta">
+                            <span><i class="bi bi-music-note"></i> ${playlist.songs ? playlist.songs.length : 0}</span>
+                            <span><i class="bi bi-heart${playlistManager.hasLikedPlaylist(playlist.id) ? '-fill' : ''}"></i> ${playlist.likes ? playlist.likes.length : 0}</span>
+                            </div>
+                        </div>
+                    </div>
+            `).join('');
+        }
+
+        function loadLikedContent(username) {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            const likedGrid = document.getElementById('likedGrid');
+            
+            if (!userData.likedContent || userData.likedContent.length === 0) {
+            likedGrid.innerHTML = `
+                <div class="empty-state">
+                    <i class="bi bi-heart"></i>
+                    <h3>No Liked Content Yet</h3>
+                        <p>Content you like will appear here.</p>
+                </div>
+            `;
+                return;
+            }
+
+            let likedHtml = '';
+            userData.likedContent.forEach(item => {
+                likedHtml += `
+                    <div class="playlist-card" onclick="window.location.href='playlist.html?id=${item.id}'">
+                        <img src="${item.content.image}" alt="${item.content.title}" onerror="this.src='assets/default-cover.jpg'">
+                        <div class="playlist-overlay">
+                            <div class="playlist-title">${item.content.title}</div>
+                            <div class="playlist-meta">
+                                <span><i class="bi bi-music-note"></i> ${item.content.type || 'Song'}</span>
+                                <span><i class="bi bi-person"></i> ${item.user.name}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            likedGrid.innerHTML = likedHtml;
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

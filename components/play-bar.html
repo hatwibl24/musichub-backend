@@ -1,0 +1,48 @@
+<div class="play-bar" id="playBar">
+    <div class="play-bar-content">
+        <div class="now-playing">
+            <div class="track-art">
+                <img id="currentTrackArt" src="assets/default-cover.jpg" alt="Track Art">
+            </div>
+            <div class="track-info">
+                <div id="currentTrackTitle" class="track-title">No track playing</div>
+                <div id="currentTrackArtist" class="track-artist">-</div>
+            </div>
+        </div>
+
+        <div class="playback-controls">
+            <button class="control-button" id="shuffleButton" title="Shuffle">
+                <i class="bi bi-shuffle"></i>
+            </button>
+            <button class="control-button" id="previousButton" title="Previous">
+                <i class="bi bi-skip-start-fill"></i>
+            </button>
+            <button class="control-button play-pause" id="playPauseButton" title="Play/Pause">
+                <i class="bi bi-play-fill"></i>
+            </button>
+            <button class="control-button" id="nextButton" title="Next">
+                <i class="bi bi-skip-end-fill"></i>
+            </button>
+            <button class="control-button" id="repeatButton" title="Repeat">
+                <i class="bi bi-repeat"></i>
+            </button>
+        </div>
+
+        <div class="progress-section">
+            <span class="time" id="currentTime">0:00</span>
+            <div class="progress-bar" id="progressBar">
+                <div class="progress" id="progress" style="width: 0%"></div>
+            </div>
+            <span class="time" id="totalTime">0:00</span>
+        </div>
+
+        <div class="volume-controls">
+            <button class="control-button" id="volumeButton" title="Mute">
+                <i class="bi bi-volume-up-fill"></i>
+            </button>
+            <div class="volume-slider" id="volumeSlider">
+                <div class="volume-level" id="volumeLevel" style="width: 100%"></div>
+            </div>
+        </div>
+    </div>
+</div> 

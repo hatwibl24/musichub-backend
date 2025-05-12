@@ -1,0 +1,434 @@
+<!-- Home Player Container -->
+<div class="home-player-container">
+    <!-- Now Playing Section -->
+    <div class="now-playing-section">
+        <div class="now-playing-visual">
+            <div class="album-artwork">
+                <img id="currentAlbumArt" src="assets/default-cover.png" alt="Album Art">
+                <div class="artwork-overlay">
+                    <button class="expand-btn">
+                        <i class="bi bi-arrows-angle-expand"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="track-info">
+                <div class="marquee-container">
+                    <span id="currentTrackName" class="track-name">No track playing</span>
+                </div>
+                <div class="track-artist">
+                    <span id="currentArtistName">-</span>
+                    <i class="bi bi-patch-check-fill verified-badge"></i>
+                </div>
+                <div class="track-actions">
+                    <button class="action-btn like-btn">
+                        <i class="bi bi-heart"></i>
+                    </button>
+                    <button class="action-btn add-playlist-btn">
+                        <i class="bi bi-plus-circle"></i>
+                    </button>
+                    <button class="action-btn share-btn">
+                        <i class="bi bi-share"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Player Controls Section -->
+    <div class="player-controls-section">
+        <div class="main-controls">
+            <div class="control-buttons">
+                <button class="control-btn shuffle-btn" title="Shuffle">
+                    <i class="bi bi-shuffle"></i>
+                </button>
+                <button class="control-btn prev-btn" title="Previous">
+                    <i class="bi bi-skip-start-fill"></i>
+                </button>
+                <button class="control-btn play-btn" title="Play/Pause">
+                    <i class="bi bi-play-circle-fill"></i>
+                </button>
+                <button class="control-btn next-btn" title="Next">
+                    <i class="bi bi-skip-end-fill"></i>
+                </button>
+                <button class="control-btn repeat-btn" title="Repeat">
+                    <i class="bi bi-repeat"></i>
+                </button>
+            </div>
+            <div class="progress-section">
+                <span class="time current-time">0:00</span>
+                <div class="progress-bar">
+                    <div class="progress-buffer"></div>
+                    <div class="progress-current"></div>
+                    <input type="range" class="progress-input" min="0" max="100" value="0">
+                </div>
+                <span class="time total-time">0:00</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Controls Section -->
+    <div class="additional-controls-section">
+        <button class="control-btn lyrics-btn" title="Lyrics">
+            <i class="bi bi-chat-square-text"></i>
+        </button>
+        <button class="control-btn queue-btn" title="Queue">
+            <i class="bi bi-music-note-list"></i>
+        </button>
+        <div class="volume-control">
+            <button class="control-btn volume-btn" title="Volume">
+                <i class="bi bi-volume-up"></i>
+            </button>
+            <div class="volume-slider">
+                <div class="volume-progress"></div>
+                <input type="range" class="volume-input" min="0" max="100" value="100">
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.home-player-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to right, var(--bg-secondary), rgba(30, 30, 30, 0.98));
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: 300px 1fr 300px;
+    gap: 2rem;
+    align-items: center;
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+}
+
+.now-playing-visual {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.album-artwork {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.album-artwork img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.artwork-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.album-artwork:hover .artwork-overlay {
+    opacity: 1;
+}
+
+.album-artwork:hover img {
+    transform: scale(1.1);
+}
+
+.track-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.marquee-container {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.track-name {
+    font-weight: 500;
+    color: var(--text-primary);
+    display: inline-block;
+    animation: marquee 15s linear infinite;
+}
+
+.track-artist {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.verified-badge {
+    color: var(--accent-blue);
+    font-size: 0.8rem;
+}
+
+.track-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0.25rem;
+}
+
+.action-btn:hover {
+    color: var(--accent-blue);
+    transform: scale(1.1);
+}
+
+.main-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.control-buttons {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.control-btn {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.control-btn:hover {
+    color: var(--accent-blue);
+    transform: scale(1.1);
+}
+
+.play-btn {
+    font-size: 2.5rem;
+}
+
+.progress-section {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    position: relative;
+    cursor: pointer;
+}
+
+.progress-buffer {
+    position: absolute;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    width: 30%;
+}
+
+.progress-current {
+    position: absolute;
+    height: 100%;
+    background: var(--accent-blue);
+    border-radius: 2px;
+    width: 0%;
+}
+
+.progress-input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.time {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    min-width: 45px;
+}
+
+.additional-controls-section {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 140px;
+}
+
+.volume-slider {
+    flex: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    position: relative;
+    cursor: pointer;
+}
+
+.volume-progress {
+    position: absolute;
+    height: 100%;
+    background: var(--accent-blue);
+    border-radius: 2px;
+    width: 100%;
+}
+
+.volume-input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
+/* Active States */
+.control-btn.active {
+    color: var(--accent-blue);
+}
+
+.like-btn.active {
+    color: #ff4081;
+}
+
+/* Hover Effects */
+.progress-bar:hover .progress-current::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: -4px;
+    width: 12px;
+    height: 12px;
+    background: var(--accent-blue);
+    border-radius: 50%;
+    box-shadow: var(--neon-glow);
+}
+</style>
+
+<script>
+let isPlaying = false;
+let currentVolume = 1;
+let isMuted = false;
+let isShuffled = false;
+let repeatMode = 'none'; // none, one, all
+let isLiked = false;
+
+// Play/Pause Toggle
+document.querySelector('.play-btn').addEventListener('click', () => {
+    isPlaying = !isPlaying;
+    const icon = document.querySelector('.play-btn i');
+    icon.className = isPlaying ? 'bi bi-pause-circle-fill' : 'bi bi-play-circle-fill';
+});
+
+// Volume Control
+document.querySelector('.volume-input').addEventListener('input', (e) => {
+    const volume = e.target.value / 100;
+    updateVolume(volume);
+});
+
+document.querySelector('.volume-btn').addEventListener('click', () => {
+    toggleMute();
+});
+
+// Like Button
+document.querySelector('.like-btn').addEventListener('click', (e) => {
+    isLiked = !isLiked;
+    e.currentTarget.classList.toggle('active');
+    e.currentTarget.querySelector('i').className = isLiked ? 'bi bi-heart-fill' : 'bi bi-heart';
+});
+
+// Shuffle Button
+document.querySelector('.shuffle-btn').addEventListener('click', (e) => {
+    isShuffled = !isShuffled;
+    e.currentTarget.classList.toggle('active');
+});
+
+// Repeat Button
+document.querySelector('.repeat-btn').addEventListener('click', (e) => {
+    const modes = ['none', 'one', 'all'];
+    const currentIndex = modes.indexOf(repeatMode);
+    repeatMode = modes[(currentIndex + 1) % modes.length];
+    
+    const icon = e.currentTarget.querySelector('i');
+    icon.className = repeatMode === 'one' ? 'bi bi-repeat-1' : 'bi bi-repeat';
+    e.currentTarget.classList.toggle('active', repeatMode !== 'none');
+});
+
+function updateVolume(volume) {
+    currentVolume = volume;
+    document.querySelector('.volume-progress').style.width = `${volume * 100}%`;
+    
+    const icon = document.querySelector('.volume-btn i');
+    if (volume === 0) {
+        icon.className = 'bi bi-volume-mute';
+    } else if (volume < 0.5) {
+        icon.className = 'bi bi-volume-down';
+    } else {
+        icon.className = 'bi bi-volume-up';
+    }
+}
+
+function toggleMute() {
+    isMuted = !isMuted;
+    if (isMuted) {
+        updateVolume(0);
+    } else {
+        updateVolume(currentVolume);
+    }
+}
+
+// Progress Bar
+document.querySelector('.progress-input').addEventListener('input', (e) => {
+    const progress = e.target.value;
+    document.querySelector('.progress-current').style.width = `${progress}%`;
+});
+
+// Update track info
+function updateTrackInfo(track) {
+    if (!track) return;
+    
+    document.getElementById('currentTrackName').textContent = track.title;
+    document.getElementById('currentArtistName').textContent = track.artist;
+    document.getElementById('currentAlbumArt').src = track.coverArt || 'assets/default-cover.png';
+    
+    // Reset animation
+    const marquee = document.querySelector('.track-name');
+    marquee.style.animation = 'none';
+    marquee.offsetHeight; // Trigger reflow
+    marquee.style.animation = null;
+}
+</script> 

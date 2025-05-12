@@ -1,0 +1,199 @@
+.playlist-container {
+    position: fixed;
+    bottom: 90px; /* Position above player bar */
+    left: 0;
+    right: 0;
+    background: var(--bg-secondary);
+    padding: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 999;
+    display: none; /* Hidden by default */
+}
+
+.playlist-wrapper {
+    width: 92%;
+    overflow: hidden;
+    margin: 0 auto;
+    position: relative;
+}
+
+.playlist-scroll {
+    display: flex;
+    transition: transform 0.3s ease;
+    gap: 1rem;
+}
+
+.playlist-item {
+    min-width: 160px;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.playlist-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.playlist-item.active {
+    background: rgba(0, 162, 255, 0.2);
+    box-shadow: var(--neon-glow);
+}
+
+.playlist-thumb {
+    width: 100%;
+    height: 90px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.playlist-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.playlist-info {
+    padding: 0.5rem;
+}
+
+.playlist-title {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.playlist-artist {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.playlist-arrows {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.playlist-arrow {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: all 0.3s ease;
+}
+
+.playlist-arrow:hover {
+    background: var(--accent-blue);
+    transform: scale(1.1);
+}
+
+.playlist-arrow.left {
+    left: -50px;
+}
+
+.playlist-arrow.right {
+    right: -50px;
+}
+
+/* Toggle button in player bar */
+.playlist-toggle {
+    position: absolute;
+    top: -30px;
+    right: 20px;
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px 4px 0 0;
+    padding: 0.5rem 1rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.playlist-toggle:hover {
+    color: var(--accent-blue);
+    border-color: var(--accent-blue);
+}
+
+/* Responsive Design for Playlist Bar */
+@media screen and (max-width: 768px) {
+    .playlist-container {
+        bottom: 180px; /* Adjust for larger player bar on mobile */
+        padding: 0.75rem;
+    }
+
+    .playlist-wrapper {
+        width: 100%;
+    }
+
+    .playlist-item {
+        min-width: 120px;
+    }
+
+    .playlist-thumb {
+        height: 70px;
+    }
+
+    .playlist-arrows {
+        display: none; /* Hide arrows on mobile - use touch scroll instead */
+    }
+
+    .playlist-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+        padding: 0.5rem;
+    }
+
+    .playlist-item {
+        scroll-snap-align: start;
+    }
+
+    .playlist-toggle {
+        top: -25px;
+        right: 10px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .playlist-container {
+        bottom: 200px; /* Adjust for even larger player bar on small mobile */
+        padding: 0.5rem;
+    }
+
+    .playlist-item {
+        min-width: 100px;
+    }
+
+    .playlist-thumb {
+        height: 60px;
+    }
+
+    .playlist-info {
+        padding: 0.25rem;
+    }
+
+    .playlist-title {
+        font-size: 0.8rem;
+    }
+
+    .playlist-artist {
+        font-size: 0.7rem;
+    }
+} 
