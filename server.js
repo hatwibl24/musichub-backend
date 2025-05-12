@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 5000;
 // CORS configuration
 const corsOptions = {
     origin: process.env.NODE_ENV === 'production'
-        ? ['https://your-frontend-domain.netlify.app']  // Replace with your Netlify domain
+        ? ['https://musichub-backend-8e12.onrender.com']  // Render URL
         : ['http://localhost:3000'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
